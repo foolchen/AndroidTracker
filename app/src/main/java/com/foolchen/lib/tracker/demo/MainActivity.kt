@@ -9,6 +9,7 @@ class MainActivity : AppCompatActivity(), ITrack {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     listeners()
+    title = getTrackName()
   }
 
   override fun getTrackName() = "主Activity"

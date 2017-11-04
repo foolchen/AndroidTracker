@@ -15,6 +15,7 @@ class SimpleActivity : AppCompatActivity(), ITrack {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     listeners()
+    title = getTrackName()
   }
 
   override fun getTrackName() = "简单的Activity"
