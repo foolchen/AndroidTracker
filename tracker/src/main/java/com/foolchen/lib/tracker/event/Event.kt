@@ -15,8 +15,12 @@ open class Event(
     @EventType private val type: String,
     @SerializedName(NAME)
     private val name: String,
+    @SerializedName(CLASS) val clazz: String,
     @SerializedName(REFER)
-    private val refer: String, @SerializedName(PARENT) private val parent: String) {
+    private val refer: String,
+    @SerializedName(REFER_CLASS) val referClazz: String,
+    @SerializedName(PARENT) private val parent: String,
+    @SerializedName(PARENT_CLASS) private val parentClazz: String) {
   @SerializedName(DISTINCT_ID)
   private val distinctId: String = Tracker.distinctId
   @SerializedName(USER_ID)
@@ -25,6 +29,8 @@ open class Event(
   val id: Long
   @SerializedName(PROPERTIES)
   var properties: HashMap<String, Any?>? = null
+  @SerializedName(TIME)
+  val time = System.currentTimeMillis()
 
   init {
     id = generateId(distinctId + userId)
@@ -33,4 +39,13 @@ open class Event(
     properties!!.putAll(Tracker.additionalProperties)
   }
 
+  fun addProperties(properties: Map<String, Any?>?) {
+    if (properties == null) {
+      return
+    }
+    if (this.properties == null) {
+      this.properties = HashMap()
+    }
+    this.properties?.putAll(properties)
+  }
 }

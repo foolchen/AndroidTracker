@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity
 import android.util.Log
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
+import com.foolchen.lib.tracker.utils.getTrackProperties
 
 /**
  * 该类用于监听项目中所有Activity的生命周期<p/>
@@ -66,8 +67,11 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
 
   private fun track(activity: Activity) {
     Tracker.refer = Tracker.name
+    Tracker.referClazz = Tracker.clazz
     Tracker.name = activity.getTrackName()
+    Tracker.clazz = activity.javaClass.canonicalName
     Tracker.parent = ""
-    Tracker.trackScreen()
+    Tracker.parentClazz = ""
+    Tracker.trackScreen(activity.getTrackProperties())
   }
 }

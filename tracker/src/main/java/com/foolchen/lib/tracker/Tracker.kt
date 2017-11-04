@@ -14,14 +14,18 @@ import com.foolchen.lib.tracker.utils.log
  */
 object Tracker {
 
-  /** 上一个浏览页面的名称 */
-  internal var refer: String = ""
 
   /**当前正在浏览的页面的名称*/
   internal var name: String = ""
+  internal var clazz: String = ""
 
   /**当前正在浏览的页面所依附的页面*/
   internal var parent: String = ""
+  internal var parentClazz: String = ""
+
+  /** 上一个浏览页面的名称 */
+  internal var refer: String = ""
+  internal var referClazz: String = ""
 
   /**
    * 固定需要获取的属性，该属性在初始化时完成
@@ -81,8 +85,9 @@ object Tracker {
 
   }
 
-  internal fun trackScreen() {
-    val event = Event(VIEW_SCREEN, name, refer, parent)
+  internal fun trackScreen(properties: Map<String, Any?>?) {
+    val event = Event(VIEW_SCREEN, name, clazz, refer, referClazz, parent, parentClazz)
+    event.addProperties(properties)
     log(event)
 
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
