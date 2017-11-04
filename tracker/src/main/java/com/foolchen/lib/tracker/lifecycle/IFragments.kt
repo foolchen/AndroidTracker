@@ -2,7 +2,6 @@ package com.foolchen.lib.tracker.lifecycle
 
 import android.app.Activity
 import android.support.v4.app.Fragment
-import java.lang.ref.WeakReference
 
 
 /**
@@ -16,5 +15,11 @@ interface IFragments {
   /**
    * 获取当前[Activity]/[Fragment]中的所有的[Fragment]
    */
-  fun getFragments(): List<WeakReference<Fragment>>
+  //fun getFragments(): List<WeakReference<Fragment>>
+
+  /**
+   * 强制规定当前页面中是否含有子Fragment
+   * 如果该方法返回false，则会被强制当做需要被统计的Fragment进行统计
+   */
+  fun hasChildFragments(): Boolean
 }

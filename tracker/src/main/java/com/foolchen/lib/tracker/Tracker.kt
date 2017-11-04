@@ -20,6 +20,9 @@ object Tracker {
   /**当前正在浏览的页面的名称*/
   internal var name: String = ""
 
+  /**当前正在浏览的页面所依附的页面*/
+  internal var parent: String = ""
+
   /**
    * 固定需要获取的属性，该属性在初始化时完成
    * 这些属性在所有的事件中都会存在
@@ -79,7 +82,7 @@ object Tracker {
   }
 
   internal fun trackScreen() {
-    val event = Event(VIEW_SCREEN, name, refer)
+    val event = Event(VIEW_SCREEN, name, refer, parent)
     log(event)
 
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口

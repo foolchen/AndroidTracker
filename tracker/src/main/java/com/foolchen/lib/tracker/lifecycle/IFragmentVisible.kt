@@ -9,6 +9,6 @@ import android.support.v4.app.Fragment
  * 下午12:02
  */
 interface IFragmentVisible {
-  fun onFragmentVisible(f: Fragment)
-  fun onFragmentHide(f: Fragment)
+  fun onFragmentVisible(f: Fragment?)
+  fun onFragmentHide(f: Fragment?)
 }

@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AndroidTrakcer</string>
+  <string name="app_name">AndroidTrakcer</string>
+  <string name="text_simple_activity">简单的Activity</string>
 </resources>
