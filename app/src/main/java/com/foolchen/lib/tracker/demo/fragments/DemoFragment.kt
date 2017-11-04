@@ -16,7 +16,7 @@ import com.foolchen.lib.tracker.lifecycle.ITrack
  * 下午4:57
  */
 
-class DemoFragment : Fragment(), ITrack {
+open class DemoFragment : Fragment(), ITrack {
   override fun getTrackName(): String = getString(R.string.text_simple_fragment)
 
   override fun getTrackProperties() = null

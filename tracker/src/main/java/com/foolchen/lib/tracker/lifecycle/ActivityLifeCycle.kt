@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import android.util.Log
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
@@ -20,7 +19,6 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   private val fragmentLifeCycle = FragmentLifeCycle()
 
   override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-    Log.d("ActivityLifeCycle", activity.toString())
     if (activity is FragmentActivity) {
       activity.supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
     }
@@ -57,6 +55,7 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   override fun onActivityDestroyed(activity: Activity?) {
+
     if (activity is FragmentActivity) {
       activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
     }

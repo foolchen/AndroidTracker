@@ -23,15 +23,18 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
 
   override fun onFragmentCreated(fm: FragmentManager?, f: Fragment?, savedInstanceState: Bundle?) {
 
-    f?.childFragmentManager?.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
-    if (f is IFragmentVisibleHlper) {
-      f.registerIFragmentVisible(this)
-    }
   }
 
   override fun onFragmentAttached(fm: FragmentManager?, f: Fragment?, context: Context?) {
     if (f != null) {
       refs.add(WeakReference(f))
+    }
+  }
+
+  override fun onFragmentStarted(fm: FragmentManager?, f: Fragment?) {
+    f?.childFragmentManager?.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
+    if (f is IFragmentVisibleHlper) {
+      f.registerIFragmentVisible(this)
     }
   }
 
@@ -72,6 +75,12 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     onFragmentHide(f)
   }
 
+  override fun onFragmentStopped(fm: FragmentManager?, f: Fragment?) {
+    if (f is IFragmentVisibleHlper) {
+      f.unregisterIFragmentVisible(this)
+    }
+    f?.childFragmentManager?.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
+  }
 
   override fun onFragmentDetached(fm: FragmentManager?, f: Fragment?) {
     for (ref in refs) {
@@ -83,10 +92,6 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
   }
 
   override fun onFragmentDestroyed(fm: FragmentManager?, f: Fragment?) {
-    if (f is IFragmentVisibleHlper) {
-      f.unregisterIFragmentVisible(this)
-    }
-    f?.childFragmentManager?.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
   }
 
   private fun track(f: Fragment) {

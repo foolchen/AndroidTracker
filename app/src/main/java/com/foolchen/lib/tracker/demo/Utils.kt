@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.foolchen.lib.tracker.demo.fragments.DemoFragment
+import com.foolchen.lib.tracker.demo.fragments.FragmentInFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 fun Activity.listeners() {
@@ -14,6 +15,9 @@ fun Activity.listeners() {
   btn_simple_fragment.setOnClickListener {
     startFragment(DemoFragment::class.java.name)
   }
+  btn_nested_fragment.setOnClickListener {
+    startFragment(FragmentInFragment::class.java.name)
+  }
 }
 
 fun Fragment.listeners() {
@@ -22,6 +26,9 @@ fun Fragment.listeners() {
   }
   btn_simple_fragment.setOnClickListener {
     startFragment(this::class.java.name)
+  }
+  btn_nested_fragment.setOnClickListener {
+    startFragment(FragmentInFragment::class.java.name)
   }
 }
 
