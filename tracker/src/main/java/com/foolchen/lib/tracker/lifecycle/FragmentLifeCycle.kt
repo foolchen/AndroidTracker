@@ -91,13 +91,13 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
       Tracker.refer = Tracker.name
       Tracker.name = trackName
       var parent = ""
-      var parentFragment = f.parentFragment
+      val parentFragment = f.parentFragment
       if (parentFragment != null) {
-        parent = parentFragment.javaClass.canonicalName
+        parent = parentFragment.getTrackName()
       } else {
         val activity = f.activity
         if (activity != null) {
-          parent = activity.javaClass.canonicalName
+          parent = activity.getTrackName()
         }
       }
       Tracker.parent = parent
