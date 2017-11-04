@@ -57,6 +57,9 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
             track(f)
           }
         }
+      } else {
+        // 直接统计
+        track(f)
       }
     }
   }

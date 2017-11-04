@@ -18,6 +18,7 @@
       </intent-filter>
     </activity>
     <activity android:name=".SimpleActivity"/>
+    <activity android:name=".FragmentContainerActivity"/>
   </application>
 
 </manifest>

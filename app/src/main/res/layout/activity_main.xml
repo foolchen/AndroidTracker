@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.foolchen.lib.tracker.demo.MainActivity"
     >
 
@@ -12,5 +13,19 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text="@string/text_simple_activity"
+      />
+
+  <Button
+      android:id="@+id/btn_simple_fragment"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/text_simple_fragment"
+      />
+
+  <FrameLayout
+      android:id="@+id/child_fragment_container"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
       />
 </LinearLayout>

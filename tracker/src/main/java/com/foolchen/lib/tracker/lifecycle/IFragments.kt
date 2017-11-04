@@ -19,7 +19,7 @@ interface IFragments {
 
   /**
    * 强制规定当前页面中是否含有子Fragment
-   * 如果该方法返回false，则会被强制当做需要被统计的Fragment进行统计
+   * 如果该方法返回false，则会被强制当做需要被统计的Fragment进行统计,以免由于Fragment没有及时初始化，导致监听的Fragment错误
    */
   fun hasChildFragments(): Boolean
 }
