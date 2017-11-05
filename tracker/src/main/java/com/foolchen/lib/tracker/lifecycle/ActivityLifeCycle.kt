@@ -24,9 +24,12 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
     }
   }
 
+  override fun onActivityStarted(activity: Activity?) {
+  }
+
   override fun onActivityResumed(activity: Activity?) {
     if (activity != null) {
-      if (activity is IFragments) {
+      /*if (activity is IFragments) {
         if (!activity.hasChildFragments()) {
           // 该Activity被强制规定没有Fragment，直接统计
           track(activity)
@@ -41,11 +44,17 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
       } else {
         // 该Activity中不存在Fragment，则该Activity就是需要统计的页面
         track(activity)
+      }*/
+      if (activity is IFragments) {
+        if (!activity.hasChildFragments()) {
+          // 内部没有Fragment，直接进行统计
+          track(activity)
+        }
+      } else {
+        // Activity内部没有Fragment，则直接进行统计
+        track(activity)
       }
     }
-  }
-
-  override fun onActivityStarted(activity: Activity?) {
   }
 
   override fun onActivityPaused(activity: Activity?) {

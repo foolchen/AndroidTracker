@@ -18,6 +18,10 @@ import com.foolchen.lib.tracker.demo.R
 class NestedFragment : DemoFragment() {
   override fun getTrackName(): String = getString(R.string.text_nested_fragment)
 
+  override fun onResume() {
+    super.onResume()
+  }
+
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
     val text = TextView(context)

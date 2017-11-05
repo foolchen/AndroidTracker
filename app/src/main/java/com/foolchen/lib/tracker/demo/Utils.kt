@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.foolchen.lib.tracker.demo.fragments.DemoFragment
 import com.foolchen.lib.tracker.demo.fragments.FragmentInFragment
+import com.foolchen.lib.tracker.demo.fragments.ViewPagerFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 fun Activity.listeners() {
@@ -18,6 +19,9 @@ fun Activity.listeners() {
   btn_nested_fragment?.setOnClickListener {
     startFragment(FragmentInFragment::class.java.name)
   }
+  btn_fragments_in_vp?.setOnClickListener {
+    startFragment(ViewPagerFragment::class.java.name)
+  }
 }
 
 fun Fragment.listeners() {
@@ -29,6 +33,9 @@ fun Fragment.listeners() {
   }
   btn_nested_fragment?.setOnClickListener {
     startFragment(FragmentInFragment::class.java.name)
+  }
+  btn_fragments_in_vp?.setOnClickListener {
+    startFragment(ViewPagerFragment::class.java.name)
   }
 }
 

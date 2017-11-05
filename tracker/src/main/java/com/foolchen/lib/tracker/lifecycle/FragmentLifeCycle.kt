@@ -1,13 +1,11 @@
 package com.foolchen.lib.tracker.lifecycle
 
 import android.content.Context
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
-import java.lang.ref.WeakReference
 
 /**
  * 该类用于监听所有Fragment的生命周期<p/>
@@ -19,16 +17,10 @@ import java.lang.ref.WeakReference
 class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmentVisible {
 
   private val fragmentLifeCycle: FragmentLifeCycle by lazy { FragmentLifeCycle() }
-  internal val refs = ArrayList<WeakReference<Fragment>>()
-
-  override fun onFragmentCreated(fm: FragmentManager?, f: Fragment?, savedInstanceState: Bundle?) {
-
-  }
+  //internal val refs = ArrayList<WeakReference<Fragment>>()
 
   override fun onFragmentAttached(fm: FragmentManager?, f: Fragment?, context: Context?) {
-    if (f != null) {
-      refs.add(WeakReference(f))
-    }
+
   }
 
   override fun onFragmentStarted(fm: FragmentManager?, f: Fragment?) {
@@ -39,12 +31,15 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
   }
 
   override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
+    /*if (f != null) {
+      refs.add(WeakReference(f))
+    }*/
     onFragmentVisible(f)
   }
 
   override fun onFragmentVisible(f: Fragment?) {
     if (f != null) {
-      if (f is IFragments) {
+      /*if (f is IFragments) {
         if (!f.hasChildFragments()) {
           // 该Fragment中不存在其他Fragment
           // 则直接对该Fragment进行统计
@@ -55,13 +50,22 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
         val refs = fragmentLifeCycle.refs
         if (refs.isEmpty()) {
           // 当前Fragment中没有子Fragment
-          if (f.isVisible && f.userVisibleHint) {
+          if (!f.isHidden && f.userVisibleHint) {
             // 并且当前Fragment可见，则统计该Fragment
             track(f)
           }
         }
-      } else {
+      } else if (!f.isHidden && f.userVisibleHint) {
         // 直接统计
+        track(f)
+      }*/
+      if (f is IFragments) {
+        if (!f.hasChildFragments() && !f.isHidden && f.userVisibleHint) {
+          // 在当前Fragment内部没有嵌套其他Fragment进行统计
+          track(f)
+        }
+      } else if (!f.isHidden && f.userVisibleHint) {
+        // Fragment没有被隐藏，且在当前显示的UI中，则进行统计
         track(f)
       }
     }
@@ -73,6 +77,12 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
 
   override fun onFragmentPaused(fm: FragmentManager?, f: Fragment?) {
     onFragmentHide(f)
+    /*for (ref in refs) {
+      if (f == ref.get()) {
+        refs.remove(ref)
+        break
+      }
+    }*/
   }
 
   override fun onFragmentStopped(fm: FragmentManager?, f: Fragment?) {
@@ -83,12 +93,7 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
   }
 
   override fun onFragmentDetached(fm: FragmentManager?, f: Fragment?) {
-    for (ref in refs) {
-      if (f == ref.get()) {
-        refs.remove(ref)
-        break
-      }
-    }
+
   }
 
   override fun onFragmentDestroyed(fm: FragmentManager?, f: Fragment?) {

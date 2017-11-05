@@ -29,6 +29,13 @@
       android:text="@string/text_has_nested_fragment"
       />
 
+  <Button
+      android:id="@+id/btn_fragments_in_vp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/text_fragments_in_vp"
+      />
+
   <FrameLayout
       android:id="@+id/child_fragment_container"
       android:layout_width="match_parent"

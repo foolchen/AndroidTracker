@@ -4,4 +4,5 @@
   <string name="text_simple_fragment">简单的Fragment</string>
   <string name="text_has_nested_fragment">含有嵌套的Fragment</string>
   <string name="text_nested_fragment">这是嵌套的Fragment</string>
+  <string name="text_fragments_in_vp">ViewPager中包含Fragment</string>
 </resources>
