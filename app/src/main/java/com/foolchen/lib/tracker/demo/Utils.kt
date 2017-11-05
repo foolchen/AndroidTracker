@@ -9,25 +9,25 @@ import com.foolchen.lib.tracker.demo.fragments.FragmentInFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 fun Activity.listeners() {
-  btn_simple_activity.setOnClickListener {
+  btn_simple_activity?.setOnClickListener {
     startActivity(Intent(this, SimpleActivity::class.java))
   }
-  btn_simple_fragment.setOnClickListener {
+  btn_simple_fragment?.setOnClickListener {
     startFragment(DemoFragment::class.java.name)
   }
-  btn_nested_fragment.setOnClickListener {
+  btn_nested_fragment?.setOnClickListener {
     startFragment(FragmentInFragment::class.java.name)
   }
 }
 
 fun Fragment.listeners() {
-  btn_simple_activity.setOnClickListener {
+  btn_simple_activity?.setOnClickListener {
     startActivity(Intent(this.context, SimpleActivity::class.java))
   }
-  btn_simple_fragment.setOnClickListener {
+  btn_simple_fragment?.setOnClickListener {
     startFragment(this::class.java.name)
   }
-  btn_nested_fragment.setOnClickListener {
+  btn_nested_fragment?.setOnClickListener {
     startFragment(FragmentInFragment::class.java.name)
   }
 }
