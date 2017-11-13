@@ -32,6 +32,3 @@ dependencies {
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
-repositories {
-  mavenCentral()
-}
