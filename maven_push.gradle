@@ -1,0 +1,109 @@
+apply plugin: 'maven'
+// 对库文件进行数字签名的插件,可以通过签名知道谁创建了这个库文件,签名的时间等等信息
+apply plugin: 'signing'
+
+// 从maven_push.properties中读取定义的属性
+Properties configs = new Properties()
+configs.load(project.rootProject.file('maven_push.properties').newDataInputStream())
+
+def maven_repo_user_name = configs.getProperty('NEXUS_USERNAME')
+def maven_repo_password = configs.getProperty('NEXUS_PASSWORD')
+
+// 声明maven库的地址
+def maven_url
+if (isReleaseBuild()) {
+  println("RELEASE BUILD")
+  maven_url = configs.getProperty('RELEASE_REPO_URL')
+} else {
+  println("SNAPSHOTS BUILD")
+  maven_url = configs.getProperty('SNAPSHOTS_REPO_URL')
+}
+
+/**
+ * 是否是发行版本
+ * */
+private boolean isReleaseBuild() {
+  return !VERSION_NAME.endsWith("SNAPSHOT")
+}
+
+// 项目构建完成时处理
+afterEvaluate { project ->
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        // 此处定义版本号、所属的组及id
+        pom.artifactId = POM_ARTIFACT_ID
+        pom.groupId = POM_GROUP_ID
+        pom.version = VERSION_NAME
+
+        // 授权验证,这里也就是你登陆搭建的私服服务器时候的用户名\密码
+        repository(url: maven_url) {
+          authentication(userName: maven_repo_user_name, password: maven_repo_password)
+        }
+
+        // 这里是配置我们maven库需要的pom.xml文件的各个内容,具体意思我们在主目录gradle.properties中解释
+        pom.project {
+          name POM_NAME
+          packaging POM_PACKAGING
+          description POM_DESCRIPTION
+          url POM_URL
+
+          /*scm {
+            url POM_SCM_URL
+            connection POM_SCM_CONNECTION
+            developerConnection POM_SCM_DEV_CONNECTION
+          }*/
+
+          licenses {
+            license {
+              name POM_LICENCE_NAME
+              url POM_LICENCE_URL
+              distribution POM_LICENCE_DIST
+            }
+          }
+
+          developers {
+            developer {
+              id POM_DEVELOPER_ID
+              name POM_DEVELOPER_NAME
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 进行数字签名
+  signing {
+    required {
+      isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives")
+    }
+    sign configurations.archives
+  }
+
+  // type显示指定任务类型或任务, 这里指定要执行Javadoc这个task,这个task在gradle中已经定义
+  task androidJavadocs(type: Javadoc) {
+    // 设置源码所在的位置
+    source = android.sourceSets.main.java.sourceFiles
+  }
+
+  // 生成javadoc.jar
+  task androidJavadocsJar(type: Jar) {
+    // 指定文档名称
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+  }
+
+  // 生成sources.jar
+  task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+  }
+
+  // 产生相关配置文件的任务
+  artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+  }
+}

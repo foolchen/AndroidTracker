@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply from: '../maven_push.gradle'
 
 android {
   compileSdkVersion rootProject.ext.compile_sdk_version
   defaultConfig {
     minSdkVersion rootProject.ext.min_sdk_version
     targetSdkVersion rootProject.ext.target_sdk_version
-    versionCode 1
-    versionName "1.0"
+    versionName VERSION_NAME
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
@@ -32,3 +32,15 @@ dependencies {
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
+
+/*// type显示指定任务类型或任务, 这里指定要执行Javadoc这个task,这个task在gradle中已经定义
+task androidJavadocs(type: Javadoc) {
+  // 设置源码所在的位置
+  source = android.sourceSets.main.java.sourceFiles
+}
+
+// 生成sources.jar
+task androidSourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.sourceFiles
+}*/
