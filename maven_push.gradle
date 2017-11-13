@@ -19,6 +19,8 @@ if (isReleaseBuild()) {
   maven_url = configs.getProperty('SNAPSHOTS_REPO_URL')
 }
 
+println("maven url = " + maven_url)
+
 /**
  * 是否是发行版本
  * */
