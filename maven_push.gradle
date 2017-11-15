@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'maven'
 // 对库文件进行数字签名的插件,可以通过签名知道谁创建了这个库文件,签名的时间等等信息
 apply plugin: 'signing'
