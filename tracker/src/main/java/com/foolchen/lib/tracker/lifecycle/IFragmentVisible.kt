@@ -9,6 +9,9 @@ import android.support.v4.app.Fragment
  * 下午12:02
  */
 interface IFragmentVisible {
-  fun onFragmentVisible(f: Fragment?)
-  fun onFragmentHide(f: Fragment?)
+  /**
+   * 在Fragment中的setUserVisibleHint()和onHidden()方法被调用时，同步调用该方法
+   * 以便于能够正确的观察到Fragment状态的变化
+   */
+  fun onFragmentVisibilityChanged(visible: Boolean, f: Fragment?)
 }

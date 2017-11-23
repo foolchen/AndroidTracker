@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
+import java.lang.ref.WeakReference
 
 /**
  * 该类用于监听所有Fragment的生命周期<p/>
@@ -17,7 +18,7 @@ import com.foolchen.lib.tracker.utils.getTrackProperties
 class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmentVisible {
 
   private val fragmentLifeCycle: FragmentLifeCycle by lazy { FragmentLifeCycle() }
-  //internal val refs = ArrayList<WeakReference<Fragment>>()
+  internal val refs = ArrayList<WeakReference<Fragment>>()
 
   override fun onFragmentAttached(fm: FragmentManager?, f: Fragment?, context: Context?) {
 
@@ -25,40 +26,16 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
 
   override fun onFragmentStarted(fm: FragmentManager?, f: Fragment?) {
     f?.childFragmentManager?.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
-    if (f is IFragmentVisibleHlper) {
-      f.registerIFragmentVisible(this)
-    }
   }
 
   override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
-    /*if (f != null) {
-      refs.add(WeakReference(f))
-    }*/
-    onFragmentVisible(f)
-  }
-
-  override fun onFragmentVisible(f: Fragment?) {
+    if (f is IFragmentVisibleHelper) {
+      f.registerIFragmentVisible(this)
+    }
     if (f != null) {
-      /*if (f is IFragments) {
-        if (!f.hasChildFragments()) {
-          // 该Fragment中不存在其他Fragment
-          // 则直接对该Fragment进行统计
-          track(f)
-          return
-        }
-
-        val refs = fragmentLifeCycle.refs
-        if (refs.isEmpty()) {
-          // 当前Fragment中没有子Fragment
-          if (!f.isHidden && f.userVisibleHint) {
-            // 并且当前Fragment可见，则统计该Fragment
-            track(f)
-          }
-        }
-      } else if (!f.isHidden && f.userVisibleHint) {
-        // 直接统计
-        track(f)
-      }*/
+      refs.add(WeakReference(f))
+    }
+    if (f != null) {
       if (f is IFragments) {
         if (!f.hasChildFragments() && !f.isHidden && f.userVisibleHint) {
           // 在当前Fragment内部没有嵌套其他Fragment进行统计
@@ -71,24 +48,48 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     }
   }
 
-  override fun onFragmentHide(f: Fragment?) {
 
+  override fun onFragmentVisibilityChanged(visible: Boolean, f: Fragment?) {
+    if (visible) {
+      if (f != null) {
+        if (f is IFragments) {
+          if (!f.hasChildFragments() && !f.isHidden && f.userVisibleHint) {
+            // 在当前Fragment内部没有嵌套其他Fragment进行统计
+            track(f)
+          } else if (f.hasChildFragments()) {
+            // 如果内部嵌套了其他Fragment，则内部的Fragment的setUserVisibleHint和onHidden方法不会被调用
+            // 故此处需要对内部的Fragment进行处理
+            // 首先，尝试找出内嵌的子Fragment中对用户可见的Fragment
+            val visibleFragments = findVisibleFragmentsFromRefs()
+            visibleFragments?.asSequence()?.forEach {
+              if (it is IFragmentVisible) {
+                it.onFragmentVisibilityChanged(visible, it)
+              }
+            }
+          }
+        } else if (!f.isHidden && f.userVisibleHint) {
+          // Fragment没有被隐藏，且在当前显示的UI中，则进行统计
+          track(f)
+        }
+      }
+    }
   }
 
+
   override fun onFragmentPaused(fm: FragmentManager?, f: Fragment?) {
-    onFragmentHide(f)
-    /*for (ref in refs) {
-      if (f == ref.get()) {
+    // 在Fragment不可见时对应的移除该Fragment
+    for (ref in refs) {
+      if (ref.get() == f) {
         refs.remove(ref)
         break
       }
-    }*/
+    }
+    if (f is IFragmentVisibleHelper) {
+      f.unregisterIFragmentVisible(this)
+    }
   }
 
   override fun onFragmentStopped(fm: FragmentManager?, f: Fragment?) {
-    if (f is IFragmentVisibleHlper) {
-      f.unregisterIFragmentVisible(this)
-    }
     f?.childFragmentManager?.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
   }
 
@@ -121,5 +122,19 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     Tracker.parent = parent
     Tracker.parentClazz = parentClazz
     Tracker.trackScreen(f.getTrackProperties())
+  }
+
+  private fun findVisibleFragmentsFromRefs(): List<Fragment>? {
+    var fragments: ArrayList<Fragment>? = null
+    for (ref in refs) {
+      val f = ref.get()
+      if (f != null && !f.isHidden && f.userVisibleHint) {
+        if (fragments == null) {
+          fragments = ArrayList()
+        }
+        fragments.add(f)
+      }
+    }
+    return fragments
   }
 }

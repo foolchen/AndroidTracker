@@ -6,7 +6,8 @@ package com.foolchen.lib.tracker.lifecycle
  * 2017/11/4
  * 下午4:01
  */
-interface IFragmentVisibleHlper {
+interface IFragmentVisibleHelper {
   fun registerIFragmentVisible(it: IFragmentVisible)
   fun unregisterIFragmentVisible(it: IFragmentVisible)
+  fun getIFragmentVisible(): IFragmentVisible?
 }
