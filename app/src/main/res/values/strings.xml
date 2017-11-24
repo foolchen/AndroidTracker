@@ -1,9 +1,12 @@
 <resources>
-  <string name="app_name">AndroidTrakcer</string>
+  <string name="app_name">AndroidTracker</string>
   <string name="text_show">显示</string>
   <string name="text_hide">隐藏</string>
 
   <string name="text_simple_fragment">简单的Fragment，无内嵌Fragment</string>
   <string name="text_nested_fragment">内嵌Fragment</string>
   <string name="text_parent_fragment">父Fragment</string>
+  <string name="text_vp_item_desc_mask">ViewPager项目 %1$d</string>
+  <string name="text_vp_fragment">ViewPager所在Fragment</string>
+  <string name="text_vp_nested_fragment_mask">ViewPager项目%1$d#内嵌Fragment</string>
 </resources>

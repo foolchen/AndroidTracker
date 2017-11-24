@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.foolchen.lib.tracker.demo.data.Demo
 import com.foolchen.lib.tracker.demo.fragments.SimpleFragment
+import com.foolchen.lib.tracker.demo.fragments.ViewPagerFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -26,7 +27,10 @@ class MainActivity : BaseActivity() {
         listOf(
             Demo("简单的Fragment", SimpleFragment::class.java.name, buildArgs(false, false)),
             Demo("内嵌的Fragment", SimpleFragment::class.java.name, buildArgs(false, true)),
-            Demo("内嵌可显隐的Fragment", SimpleFragment::class.java.name, buildArgs(true, true))
+            Demo("内嵌可显隐的Fragment", SimpleFragment::class.java.name, buildArgs(true, true)),
+            Demo("ViewPager+Fragment", ViewPagerFragment::class.java.name, buildArgs(false, false)),
+            Demo("ViewPager+Fragment+内嵌Fragment", ViewPagerFragment::class.java.name,
+                buildArgs(false, true))
         )
     )
 

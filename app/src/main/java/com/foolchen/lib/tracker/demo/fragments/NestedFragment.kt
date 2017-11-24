@@ -44,4 +44,6 @@ class NestedFragment : BaseFragment() {
       tv_desc.text = desc
     }
   }
+
+  override fun getTrackName(): String? = tv_desc.text.toString()
 }

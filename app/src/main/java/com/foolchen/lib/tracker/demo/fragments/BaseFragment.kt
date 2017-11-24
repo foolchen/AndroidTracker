@@ -25,6 +25,11 @@ open class BaseFragment : Fragment(), ITrack, IFragments, IFragmentVisibleHelper
     mIFragmentVisible?.onFragmentVisibilityChanged(!hidden, this)
   }
 
+  override fun onResume() {
+    super.onResume()
+    mIFragmentVisible?.onFragmentVisibilityChanged(true, this)
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   // 该类实现ITrack接口，此处两个方法全部返回null
   // 则页面名称（别名）会直接取使用canonicalName来当做标题

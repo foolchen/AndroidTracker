@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
 class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmentVisible {
 
   private val fragmentLifeCycle: FragmentLifeCycle by lazy { FragmentLifeCycle() }
-  internal val refs = ArrayList<WeakReference<Fragment>>()
+  private val refs = ArrayList<WeakReference<Fragment>>()
 
   override fun onFragmentAttached(fm: FragmentManager?, f: Fragment?, context: Context?) {
 
@@ -35,19 +35,30 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     if (f != null) {
       refs.add(WeakReference(f))
     }
+    //TODO 在执行了onPause之后，内嵌的Fragment没有监听到onResume()，可能是由于注册callback的时机问题
     if (f != null) {
-      if (f is IFragments) {
-        if (!f.hasChildFragments() && !f.isHidden && f.userVisibleHint) {
-          // 在当前Fragment内部没有嵌套其他Fragment进行统计
-          track(f)
-        }
-      } else if (!f.isHidden && f.userVisibleHint) {
-        // Fragment没有被隐藏，且在当前显示的UI中，则进行统计
+      if (isVisible(f)) {
         track(f)
       }
     }
   }
 
+  private fun isVisible(f: Fragment): Boolean {
+    return if (f is IFragments) {
+      isParentVisible(f) && !f.hasChildFragments() && !f.isHidden && f.userVisibleHint
+    } else {
+      isParentVisible(f) && !f.isHidden && f.userVisibleHint
+    }
+  }
+
+  private fun isParentVisible(f: Fragment): Boolean {
+    val parent = f.parentFragment
+    return if (parent == null) {
+      true
+    } else {
+      !parent.isHidden && parent.userVisibleHint
+    }
+  }
 
   override fun onFragmentVisibilityChanged(visible: Boolean, f: Fragment?) {
     if (visible) {
@@ -61,13 +72,16 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
             // 故此处需要对内部的Fragment进行处理
             // 首先，尝试找出内嵌的子Fragment中对用户可见的Fragment
             val visibleFragments = findVisibleFragmentsFromRefs()
-            visibleFragments?.asSequence()?.forEach {
-              if (it is IFragmentVisible) {
-                it.onFragmentVisibilityChanged(visible, it)
-              }
-            }
+            visibleFragments?.
+                //asSequence()?.
+                forEach {
+                  if (it is IFragmentVisibleHelper && isVisible(it)) {
+                    //it.onFragmentVisibilityChanged(visible, it)
+                    it.getIFragmentVisible()?.onFragmentVisibilityChanged(visible, it)
+                  }
+                }
           }
-        } else if (!f.isHidden && f.userVisibleHint) {
+        } else if (isParentVisible(f) && !f.isHidden && f.userVisibleHint) {
           // Fragment没有被隐藏，且在当前显示的UI中，则进行统计
           track(f)
         }
@@ -126,7 +140,7 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
 
   private fun findVisibleFragmentsFromRefs(): List<Fragment>? {
     var fragments: ArrayList<Fragment>? = null
-    for (ref in refs) {
+    for (ref in fragmentLifeCycle.refs) {
       val f = ref.get()
       if (f != null && !f.isHidden && f.userVisibleHint) {
         if (fragments == null) {

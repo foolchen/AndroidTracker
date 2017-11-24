@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
 import com.foolchen.lib.tracker.demo.R
-import kotlinx.android.synthetic.main.layout_simple_fragment.*
+import kotlinx.android.synthetic.main.fragment_simple.*
 
 /**
  * 简单的Fragment，内部不包含任何其他的Framgent
@@ -29,7 +29,7 @@ class SimpleFragment : BaseFragment() {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? =
-      inflater.inflate(R.layout.layout_simple_fragment, container, false)
+      inflater.inflate(R.layout.fragment_simple, container, false)
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
