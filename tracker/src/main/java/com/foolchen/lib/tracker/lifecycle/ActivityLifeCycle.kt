@@ -24,7 +24,7 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
       wrap(activity)
     }
     if (activity is FragmentActivity) {
-      activity.supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
+      activity.supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentLifeCycle, true)
     }
   }
 

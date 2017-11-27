@@ -1,6 +1,5 @@
 package com.foolchen.lib.tracker.lifecycle
 
-import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import com.foolchen.lib.tracker.Tracker
@@ -17,16 +16,7 @@ import java.lang.ref.WeakReference
  */
 class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmentVisible {
 
-  private val fragmentLifeCycle: FragmentLifeCycle by lazy { FragmentLifeCycle() }
   private val refs = ArrayList<WeakReference<Fragment>>()
-
-  override fun onFragmentAttached(fm: FragmentManager?, f: Fragment?, context: Context?) {
-
-  }
-
-  override fun onFragmentStarted(fm: FragmentManager?, f: Fragment?) {
-    f?.childFragmentManager?.registerFragmentLifecycleCallbacks(fragmentLifeCycle, false)
-  }
 
   override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
     if (f is IFragmentVisibleHelper) {
@@ -35,55 +25,22 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     if (f != null) {
       refs.add(WeakReference(f))
     }
-    //TODO 在执行了onPause之后，内嵌的Fragment没有监听到onResume()，可能是由于注册callback的时机问题
-    if (f != null) {
-      if (isVisible(f)) {
+    f?.let {
+      if (isParentVisible(f) && !isParentFragment(f) && isVisible(f)) {
+        // 如果父Fragment可见
+        // 并且本身不是父Fragment
+        // 并且本身可见，则进行统计
         track(f)
       }
     }
   }
 
-  private fun isVisible(f: Fragment): Boolean {
-    return if (f is IFragments) {
-      isParentVisible(f) && !f.hasChildFragments() && !f.isHidden && f.userVisibleHint
-    } else {
-      isParentVisible(f) && !f.isHidden && f.userVisibleHint
-    }
-  }
-
-  private fun isParentVisible(f: Fragment): Boolean {
-    val parent = f.parentFragment
-    return if (parent == null) {
-      true
-    } else {
-      !parent.isHidden && parent.userVisibleHint
-    }
-  }
-
   override fun onFragmentVisibilityChanged(visible: Boolean, f: Fragment?) {
     if (visible) {
-      if (f != null) {
-        if (f is IFragments) {
-          if (!f.hasChildFragments() && !f.isHidden && f.userVisibleHint) {
-            // 在当前Fragment内部没有嵌套其他Fragment进行统计
-            track(f)
-          } else if (f.hasChildFragments()) {
-            // 如果内部嵌套了其他Fragment，则内部的Fragment的setUserVisibleHint和onHidden方法不会被调用
-            // 故此处需要对内部的Fragment进行处理
-            // 首先，尝试找出内嵌的子Fragment中对用户可见的Fragment
-            val visibleFragments = findVisibleFragmentsFromRefs()
-            visibleFragments?.
-                //asSequence()?.
-                forEach {
-                  if (it is IFragmentVisibleHelper && isVisible(it)) {
-                    //it.onFragmentVisibilityChanged(visible, it)
-                    it.getIFragmentVisible()?.onFragmentVisibilityChanged(visible, it)
-                  }
-                }
-          }
-        } else if (isParentVisible(f) && !f.isHidden && f.userVisibleHint) {
-          // Fragment没有被隐藏，且在当前显示的UI中，则进行统计
-          track(f)
+      f?.let {
+        // 由于内嵌的Fragment不会触发onHiddenChange()和setUserVisibleHint()方法，故此处只能根据其父Fragment来判断
+        findVisibleChildren(f).forEach {
+          track(it)
         }
       }
     }
@@ -101,17 +58,6 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     if (f is IFragmentVisibleHelper) {
       f.unregisterIFragmentVisible(this)
     }
-  }
-
-  override fun onFragmentStopped(fm: FragmentManager?, f: Fragment?) {
-    f?.childFragmentManager?.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
-  }
-
-  override fun onFragmentDetached(fm: FragmentManager?, f: Fragment?) {
-
-  }
-
-  override fun onFragmentDestroyed(fm: FragmentManager?, f: Fragment?) {
   }
 
   private fun track(f: Fragment) {
@@ -138,17 +84,74 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     Tracker.trackScreen(f.getTrackProperties())
   }
 
-  private fun findVisibleFragmentsFromRefs(): List<Fragment>? {
-    var fragments: ArrayList<Fragment>? = null
-    for (ref in fragmentLifeCycle.refs) {
-      val f = ref.get()
-      if (f != null && !f.isHidden && f.userVisibleHint) {
-        if (fragments == null) {
-          fragments = ArrayList()
-        }
-        fragments.add(f)
-      }
+  /**
+   * 根据一个Fragment，从[refs]中查找其所有的子Fragment/子孙Fragment
+   * @param parent 要查找的父/祖先Fragment
+   * @return 查找到的Fragment，如果不存在Fragment，则返回的列表元素数量为0
+   */
+  private fun findVisibleChildren(parent: Fragment): List<Fragment> {
+    val children = ArrayList<Fragment>()
+    refs.filter {
+      // 此处用于过滤掉父Fragment不符的Fragment
+      val child = it.get()
+      child != null && checkParent(child, parent)
+    }.filter {
+      // 此处用于过滤掉不可见的Fragment
+      val child = it.get()
+      child != null && !child.isHidden && child.userVisibleHint
+    }.forEach {
+      val child = it.get()
+      child?.let { children.add(child) }
     }
-    return fragments
+
+    // 如果没有符合需要的children，则其自身就为符合需要的Fragment
+    if (children.isEmpty()) {
+      children.add(parent)
+    }
+
+    return children
+  }
+
+  /**
+   * 判断一个Fragment是否可见
+   * @param f 要判断的Fragment
+   * @return 在Fragment的[Fragment.isHidden]为false，并且[Fragment.getUserVisibleHint]为true时，才返回true；否则false
+   */
+  private fun isVisible(f: Fragment): Boolean = !f.isHidden && f.userVisibleHint
+
+  /**
+   * 判断父Fragment是否可见
+   * @return 父Fragment不存在时，直接返回true；父Fragment可见时返回true；其他情况时返回false
+   */
+  private fun isParentVisible(f: Fragment): Boolean {
+    val parent = f.parentFragment
+    return if (parent == null) {
+      true
+    } else {
+      !parent.isHidden && parent.userVisibleHint
+    }
+  }
+
+  /**
+   * 判断是否为其他Fragment的父级
+   * @param f 需要检查的Fragment
+   * @return 在[f]实现了[IFragments]接口，并且[IFragments.hasChildFragments]值为true时，返回true；其他情况下返回false
+   */
+  private fun isParentFragment(f: Fragment): Boolean = f is IFragments && f.hasChildFragments()
+
+  /**
+   * 检查一个[parent]是否是[child]的父Fragment/祖先Fragment
+   */
+  private fun checkParent(child: Fragment, parent: Fragment): Boolean {
+    val parentFragment = child.parentFragment
+    return if (parentFragment != null) {
+      if (parentFragment == parent) {// 如果是父Fragment，则直接返回true
+        true
+      } else {// 如果不是父Fragment，并且还存在祖先Fragment，则进入递归
+        checkParent(parentFragment, parent)
+      }
+    } else {// 如果不存在父Fragment，则直接返回false
+      false
+    }
   }
 }
