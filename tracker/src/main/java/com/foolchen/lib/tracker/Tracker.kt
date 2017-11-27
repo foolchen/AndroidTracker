@@ -42,13 +42,26 @@ object Tracker {
   internal var userId: String? = null
 
   internal var isDebugEnable = false
+  private var isCleanWithBackground = true
 
   fun initialize(app: Application) {
     app.registerActivityLifecycleCallbacks(ActivityLifeCycle())
   }
 
+  /**
+   * 设置是否为调试模式
+   */
   fun setDebugEnable(enable: Boolean) {
     isDebugEnable = enable
+  }
+
+  /**
+   * 设置是否在App切换到后台时，将前向地址等信息清空
+   * 该功能默认为开启
+   * @param clean 设置为true，则之前所有的前向地址、前向类名等都会在App被切换到后台时被清空，从后台切换回App时，访问的页面没有前向地址等信息
+   */
+  fun cleanWithBackground(clean: Boolean) {
+    isCleanWithBackground = clean
   }
 
   /**
@@ -97,12 +110,14 @@ object Tracker {
    * 清空已保存的前向地址等状态
    */
   internal fun clean() {
-    name = ""
-    clazz = ""
-    parent = ""
-    parentClazz = ""
-    refer = ""
-    referClazz = ""
+    isCleanWithBackground.let {
+      name = ""
+      clazz = ""
+      parent = ""
+      parentClazz = ""
+      refer = ""
+      referClazz = ""
+    }
   }
 
 }
