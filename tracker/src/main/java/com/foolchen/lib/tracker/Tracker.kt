@@ -93,4 +93,16 @@ object Tracker {
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
   }
 
+  /**
+   * 清空已保存的前向地址等状态
+   */
+  internal fun clean() {
+    name = ""
+    clazz = ""
+    parent = ""
+    parentClazz = ""
+    refer = ""
+    referClazz = ""
+  }
+
 }

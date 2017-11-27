@@ -8,6 +8,7 @@ import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.layout.wrap
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
+import java.lang.ref.WeakReference
 
 /**
  * 该类用于监听项目中所有Activity的生命周期<p/>
@@ -18,6 +19,7 @@ import com.foolchen.lib.tracker.utils.getTrackProperties
  */
 class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   private val fragmentLifeCycle = FragmentLifeCycle()
+  private val refs = ArrayList<WeakReference<Activity>>()
 
   override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
     if (activity != null) {
@@ -29,26 +31,13 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   override fun onActivityStarted(activity: Activity?) {
+    activity?.let {
+      refs.add(WeakReference(activity))
+    }
   }
 
   override fun onActivityResumed(activity: Activity?) {
     if (activity != null) {
-      /*if (activity is IFragments) {
-        if (!activity.hasChildFragments()) {
-          // 该Activity被强制规定没有Fragment，直接统计
-          track(activity)
-          return
-        }
-
-        val refs = fragmentLifeCycle.refs
-        if (refs.isEmpty()) {
-          // 该Activity中不存在Fragment，则该Activity就是需要统计的页面
-          track(activity)
-        }
-      } else {
-        // 该Activity中不存在Fragment，则该Activity就是需要统计的页面
-        track(activity)
-      }*/
       if (activity is IFragments) {
         if (!activity.hasChildFragments()) {
           // 内部没有Fragment，直接进行统计
@@ -65,10 +54,20 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   override fun onActivityStopped(activity: Activity?) {
+    activity?.let {
+      for (ref in refs) {
+        if (ref.get() == activity) {
+          refs.remove(ref)
+          break
+        }
+      }
+    }
+    if (refs.isEmpty()) {
+      Tracker.clean()
+    }
   }
 
   override fun onActivityDestroyed(activity: Activity?) {
-
     if (activity is FragmentActivity) {
       activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentLifeCycle)
     }

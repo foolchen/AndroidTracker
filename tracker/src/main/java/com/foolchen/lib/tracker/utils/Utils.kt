@@ -88,6 +88,4 @@ private fun log(s: String) {
   Log.v(TAG, s)
 }
 
-private fun Event.toJson(): String {
-  return GSON.toJson(this)
-}
+private fun Event.toJson(): String = GSON.toJson(this)
