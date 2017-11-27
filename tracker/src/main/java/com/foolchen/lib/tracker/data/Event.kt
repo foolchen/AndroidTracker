@@ -1,4 +1,4 @@
-package com.foolchen.lib.tracker.event
+package com.foolchen.lib.tracker.data
 
 import com.foolchen.lib.tracker.*
 import com.foolchen.lib.tracker.utils.generateId

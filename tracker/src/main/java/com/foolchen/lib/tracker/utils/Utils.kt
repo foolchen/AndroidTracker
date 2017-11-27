@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.Mode
-import com.foolchen.lib.tracker.event.Event
+import com.foolchen.lib.tracker.data.Event
 import com.foolchen.lib.tracker.lifecycle.ITrack
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

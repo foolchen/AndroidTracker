@@ -2,8 +2,8 @@ package com.foolchen.lib.tracker
 
 import android.app.Application
 import com.foolchen.lib.tracker.data.Mode
-import com.foolchen.lib.tracker.event.Event
-import com.foolchen.lib.tracker.event.VIEW_SCREEN
+import com.foolchen.lib.tracker.data.Event
+import com.foolchen.lib.tracker.data.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.log
 
@@ -104,7 +104,8 @@ object Tracker {
   }
 
   internal fun trackScreen(properties: Map<String, Any?>?) {
-    val event = Event(VIEW_SCREEN, name, clazz, refer, referClazz, parent, parentClazz)
+    val event = Event(VIEW_SCREEN, name,
+        clazz, refer, referClazz, parent, parentClazz)
     event.addProperties(properties)
     log(event)
 

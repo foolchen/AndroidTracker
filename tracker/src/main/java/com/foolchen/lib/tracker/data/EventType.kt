@@ -1,4 +1,4 @@
-package com.foolchen.lib.tracker.event
+package com.foolchen.lib.tracker.data
 
 import android.support.annotation.StringDef
 
