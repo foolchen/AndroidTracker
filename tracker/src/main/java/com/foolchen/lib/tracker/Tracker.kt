@@ -1,6 +1,7 @@
 package com.foolchen.lib.tracker
 
 import android.app.Application
+import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.event.Event
 import com.foolchen.lib.tracker.event.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
@@ -41,7 +42,7 @@ object Tracker {
   internal var distinctId = ""
   internal var userId: String? = null
 
-  internal var isDebugEnable = false
+  internal var mode = Mode.RELEASE
   private var isCleanWithBackground = true
 
   fun initialize(app: Application) {
@@ -49,10 +50,14 @@ object Tracker {
   }
 
   /**
-   * 设置是否为调试模式
+   * 设置统计的模式
+   * @see [Mode]]
+   * @see [Mode.DEBUG_ONLY]
+   * @see [Mode.DEBUG_TRACK]
+   * @see [Mode.RELEASE]
    */
-  fun setDebugEnable(enable: Boolean) {
-    isDebugEnable = enable
+  fun setMode(mode: Mode) {
+    this@Tracker.mode = mode
   }
 
   /**

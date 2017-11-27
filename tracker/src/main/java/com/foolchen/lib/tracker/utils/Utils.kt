@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.v4.app.Fragment
 import android.util.Log
 import com.foolchen.lib.tracker.Tracker
+import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.event.Event
 import com.foolchen.lib.tracker.lifecycle.ITrack
 import com.google.gson.Gson
@@ -79,7 +80,9 @@ internal fun Fragment.getTrackProperties(): Map<String, Unit> {
 
 
 internal fun log(event: Event) {
-  if (Tracker.isDebugEnable) {
+  if (Tracker.mode == Mode.DEBUG_ONLY) {
+    log(event.toJson())
+  } else if (Tracker.mode == Mode.DEBUG_TRACK) {
     log(event.toJson())
   }
 }
