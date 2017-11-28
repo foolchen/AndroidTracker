@@ -1,8 +1,11 @@
 package com.foolchen.lib.tracker
 
 import android.app.Application
-import com.foolchen.lib.tracker.data.Mode
+import android.view.MotionEvent
+import android.view.View
+import android.widget.TextView
 import com.foolchen.lib.tracker.data.Event
+import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.data.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.log
@@ -110,6 +113,11 @@ object Tracker {
     log(event)
 
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
+  }
+
+  internal fun trackView(view: View, ev: MotionEvent) {
+    if (view is TextView) {
+    }
   }
 
   /**
