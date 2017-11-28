@@ -1,8 +1,7 @@
 package com.foolchen.lib.tracker.data
 
 import com.foolchen.lib.tracker.*
-import com.foolchen.lib.tracker.utils.generateId
-import com.google.gson.annotations.SerializedName
+import com.foolchen.lib.tracker.utils.*
 
 /**
  * 统计事件
@@ -11,35 +10,21 @@ import com.google.gson.annotations.SerializedName
  * 下午2:48
  */
 open class Event(
-    @SerializedName(TYPE)
-    @EventType private val type: String,
-    @SerializedName(NAME)
-    private val name: String,
-    @SerializedName(CLASS) val clazz: String,
-    @SerializedName(REFER)
-    private val refer: String,
-    @SerializedName(REFER_CLASS) val referClazz: String,
-    @SerializedName(PARENT) private val parent: String,
-    @SerializedName(PARENT_CLASS) private val parentClazz: String) {
-  @SerializedName(DISTINCT_ID)
-  private val distinctId: String = Tracker.distinctId
-  @SerializedName(USER_ID)
-  private val userId: String? = Tracker.userId
-  @SerializedName(ID)
-  val id: Long
-  @SerializedName(PROPERTIES)
-  var properties: HashMap<String, Any?>? = null
-  @SerializedName(TIME)
+    @EventType private val event: String,
+    private val screenAlias: String, val screenName: String,
+    private val refererAlias: String, val referer: String,
+    private val parentAlias: String,
+    private val parent: String) {
+
+  var properties: HashMap<String, Any>? = null
   val time = System.currentTimeMillis()
 
   init {
-    id = generateId(distinctId + userId)
     properties = HashMap()
-    properties!!.putAll(Tracker.buildInProperties)
     properties!!.putAll(Tracker.additionalProperties)
   }
 
-  fun addProperties(properties: Map<String, Any?>?) {
+  fun addProperties(properties: Map<String, Any>?) {
     if (properties == null) {
       return
     }
@@ -47,5 +32,29 @@ open class Event(
       this.properties = HashMap()
     }
     this.properties?.putAll(properties)
+  }
+
+  fun toJson(): String {
+    val o = HashMap<String, Any>()
+    o.putAll(buildInObject)
+    o.put(EVENT, event)
+    o.put(TIME, time)
+    o.put(DISTINCT_ID, Tracker.userId ?: buildInUUID)// 如果已登录，则该值是可以被替换掉的
+
+    o.put(LIB, buildInLib)
+    val properties = HashMap<String, Any>()
+    properties.putAll(buildInProperties)
+    properties.put(SCREEN_NAME_ALIAS, screenAlias)
+    properties.put(SCREEN_NAME, screenName)
+    properties.put(REFERER_ALIAS, refererAlias)
+    properties.put(REFERER, referer)
+    properties.put(PARENT_ALIAS, parentAlias)
+    properties.put(PARENT, parent)
+    this@Event.properties?.let {
+      properties.putAll(it)
+    }
+
+    o.put(PROPERTIES, properties)
+    return PRETTY_GSON.toJson(o)
   }
 }

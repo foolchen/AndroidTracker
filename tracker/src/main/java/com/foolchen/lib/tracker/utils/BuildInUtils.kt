@@ -13,49 +13,50 @@ import android.view.WindowManager
 import com.foolchen.lib.tracker.BuildConfig
 import com.foolchen.lib.tracker.data.MNC
 import com.foolchen.lib.tracker.data.NetworkType
-import java.util.*
 
+
+internal val buildInObject: HashMap<String, Any> = HashMap()
+internal val buildInLib: HashMap<String, Any> = HashMap()
+internal val buildInProperties: HashMap<String, Any> = HashMap()
+
+internal var buildInUUID = ""
 
 /**
  * 获取内置属性
  */
-internal fun getBuildInProperties(context: Context): Map<String, Any> {
+internal fun initBuildInProperties(context: Context) {
 
-  val o = HashMap<String, Any>()
-  o.put("\$time", System.currentTimeMillis())
+  buildInObject.put("\$time", System.currentTimeMillis())
 
-  val lib = HashMap<String, Any>()
-  lib.put("\$lib", "Android")
-  lib.put("\$lib_version", BuildConfig.VERSION_NAME)
-  lib.put("\$app_version", context.getVersionName())
+  buildInLib.put("\$lib", "Android")
+  buildInLib.put("\$lib_version", BuildConfig.VERSION_NAME)
+  buildInLib.put("\$app_version", context.getVersionName())
 
-  val properties = HashMap<String, Any>()
-  properties.put("\$lib", "Android")
-  properties.put("\$lib_version", BuildConfig.VERSION_NAME)
-  properties.put("\$app_version", context.getVersionName())
-  properties.put("\$manufacturer", Build.BRAND)
-  properties.put("\$model", Build.MODEL)
-  properties.put("\$os", "Android")
-  properties.put("\$os_version", Build.VERSION.RELEASE)
-  properties.put("\$os_version", Build.VERSION.RELEASE)
-  properties.put("\$screen_height", context.getScreenWidth())
-  properties.put("\$screen_width", context.getScreenHeight())
-  properties.put("\$wifi", context.isWiFi())
-  properties.put("\$carrier", context.getMNC().desc())
-  properties.put("\$network_type", context.getNetworkType().desc())
-  properties.put("\$device_id", context.getAndroidId())
-  properties.put("\$distinct_id", context.getUUID())// 如果已登录，则该值是可以被替换掉的
-  properties.put("\$imeicode", context.getIMEI())
-  return properties
+  buildInProperties.put("\$lib", "Android")
+  buildInProperties.put("\$lib_version", BuildConfig.VERSION_NAME)
+  buildInProperties.put("\$app_version", context.getVersionName())
+  buildInProperties.put("\$manufacturer", Build.BRAND)
+  buildInProperties.put("\$model", Build.MODEL)
+  buildInProperties.put("\$os", "Android")
+  buildInProperties.put("\$os_version", Build.VERSION.RELEASE)
+  buildInProperties.put("\$os_version", Build.VERSION.RELEASE)
+  buildInProperties.put("\$screen_height", context.getScreenWidth())
+  buildInProperties.put("\$screen_width", context.getScreenHeight())
+  buildInProperties.put("\$wifi", context.isWiFi())
+  buildInProperties.put("\$carrier", context.getMNC().desc())
+  buildInProperties.put("\$network_type", context.getNetworkType().desc())
+  buildInProperties.put("\$imeicode", context.getIMEI())
+  buildInProperties.put("\$device_id", context.getAndroidId())
+
+  buildInUUID = context.getUUID()
 }
 
-internal fun login(buildInProperties: Map<String, Any>, distinctId: String) {
-  (buildInProperties["properties"] as? HashMap<String, Any>)?.put("\$distinct_id", distinctId)
+internal fun login(userId: String) {
+  buildInProperties.put("\$distinct_id", userId)
 }
 
-internal fun logout(context: Context, buildInProperties: Map<String, Any>) {
-  (buildInProperties["properties"] as? HashMap<String, Any>)?.put("\$distinct_id",
-      context.getUUID())
+internal fun logout(context: Context) {
+  buildInProperties.put("\$distinct_id", context.getUUID())
 }
 
 /**
@@ -204,7 +205,7 @@ private fun Context.getAndroidId(): String {
       android.provider.Settings.Secure.ANDROID_ID) ?: ""
 }
 
-private fun Context.getUUID(): String = (Build.BRAND + Build.MODEL + getAndroidId()).hashCode().toString()
+private fun Context.getUUID(): String = (Build.BRAND + Build.MODEL).hashCode().toString() + getAndroidId()
 
 @SuppressLint("MissingPermission")
 /**

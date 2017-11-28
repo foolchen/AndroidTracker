@@ -12,7 +12,7 @@ import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.data.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.TAG
-import com.foolchen.lib.tracker.utils.getBuildInProperties
+import com.foolchen.lib.tracker.utils.initBuildInProperties
 import com.foolchen.lib.tracker.utils.log
 import com.foolchen.lib.tracker.utils.login as buildInLogin
 import com.foolchen.lib.tracker.utils.logout as buildInLogout
@@ -29,36 +29,31 @@ object Tracker {
 
 
   /**当前正在浏览的页面的名称*/
-  internal var name: String = ""
-  internal var clazz: String = ""
+  internal var screenNameAlias: String = ""
+  internal var screenName: String = ""
 
   /**当前正在浏览的页面所依附的页面*/
+  internal var parentAlias: String = ""
   internal var parent: String = ""
-  internal var parentClazz: String = ""
 
   /** 上一个浏览页面的名称 */
-  internal var refer: String = ""
-  internal var referClazz: String = ""
+  internal var refererAlias: String = ""
+  internal var referer: String = ""
 
-  /**
-   * 固定需要获取的属性，该属性在初始化时完成
-   * 这些属性在所有的事件中都会存在
-   */
-  internal val buildInProperties = HashMap<String, Any>()
   /**
    * 开发者在初始化时附加的属性
    * 这些属性在所有的事件中都会存在
    */
   internal val additionalProperties = HashMap<String, Any>()
 
-  internal var distinctId = ""
   internal var userId: String? = null
 
   internal var mode = Mode.RELEASE
   private var isCleanWithBackground = true
 
   fun initialize(app: Application) {
-    buildInProperties.putAll(getBuildInProperties(app))
+    //buildInProperties.putAll(getBuildInProperties(app))
+    initBuildInProperties(app)
     app.registerActivityLifecycleCallbacks(ActivityLifeCycle())
   }
 
@@ -106,19 +101,19 @@ object Tracker {
    * 用户登录
    */
   fun login(userId: String) {
-    buildInLogin(buildInProperties, userId)
+    buildInLogin(userId)
   }
 
   /**
    * 用户登出
    */
   fun logout(context: Context) {
-    buildInLogout(context, buildInProperties)
+    buildInLogout(context)
   }
 
-  internal fun trackScreen(properties: Map<String, Any?>?) {
-    val event = Event(VIEW_SCREEN, name,
-        clazz, refer, referClazz, parent, parentClazz)
+  internal fun trackScreen(properties: Map<String, Any>?) {
+    val event = Event(VIEW_SCREEN, screenNameAlias,
+        screenName, refererAlias, referer, parentAlias, parent)
     event.addProperties(properties)
     log(event)
 
@@ -154,12 +149,12 @@ object Tracker {
    */
   internal fun clean() {
     isCleanWithBackground.let {
-      name = ""
-      clazz = ""
+      screenNameAlias = ""
+      screenName = ""
+      parentAlias = ""
       parent = ""
-      parentClazz = ""
-      refer = ""
-      referClazz = ""
+      refererAlias = ""
+      referer = ""
     }
   }
 

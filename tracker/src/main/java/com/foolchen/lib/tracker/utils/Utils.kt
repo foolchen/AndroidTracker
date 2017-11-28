@@ -4,14 +4,17 @@ import android.app.Activity
 import android.support.v4.app.Fragment
 import android.util.Log
 import com.foolchen.lib.tracker.Tracker
-import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.data.Event
+import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.lifecycle.ITrack
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-val GSON: Gson by lazy {
+val PRETTY_GSON: Gson by lazy {
   GsonBuilder().setPrettyPrinting().create()
+}
+val GSON: Gson by lazy {
+  Gson()
 }
 
 const val TAG = "AndroidTracker"
@@ -88,7 +91,5 @@ internal fun log(event: Event) {
 }
 
 private fun log(s: String) {
-  Log.v(TAG, s)
+  Log.d(TAG, s)
 }
-
-private fun Event.toJson(): String = GSON.toJson(this)
