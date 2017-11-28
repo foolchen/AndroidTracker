@@ -54,25 +54,14 @@ class MainActivity : BaseActivity() {
     return args
   }
 
-  private inner class FragmentsAdapter : RecyclerView.Adapter<FragmentsHolder> {
-    private val demos: List<Demo>
-
-    constructor(demos: List<Demo>) {
-      this.demos = demos
-    }
+  private inner class FragmentsAdapter(
+      private val demos: List<Demo>) : RecyclerView.Adapter<FragmentsHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FragmentsHolder {
       val itemView = LayoutInflater.from(parent.context).inflate(
           android.R.layout.simple_list_item_1,
           parent,
           false)
-      itemView.setOnClickListener {
-        val tag = itemView.tag
-        if (tag is Demo) {
-          startFragment(tag.name, tag.args)
-
-        }
-      }
       return FragmentsHolder(itemView)
     }
 
@@ -80,6 +69,9 @@ class MainActivity : BaseActivity() {
       val item = getItem(position)
       holder?.textView?.text = item.desc
       holder?.itemView?.tag = item
+      holder?.itemView?.setOnClickListener {
+        startFragment(item.name, item.args)
+      }
     }
 
     override fun getItemCount(): Int = this.demos.size

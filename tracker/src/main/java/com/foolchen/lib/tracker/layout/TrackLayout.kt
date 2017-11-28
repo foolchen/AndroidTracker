@@ -3,7 +3,6 @@ package com.foolchen.lib.tracker.layout
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import com.foolchen.lib.tracker.R
  * 上午10:07
  */
 class TrackLayout : FrameLayout {
-  private val TAG = TrackLayout::class.java.simpleName
   private val rect = Rect()
   private var clickFunc: ((View, MotionEvent) -> Unit)? = null
   private var itemClickFunc: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)? = null
@@ -63,10 +61,6 @@ class TrackLayout : FrameLayout {
   internal fun registerItemClickFunc(
       func: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)) {
     this@TrackLayout.itemClickFunc = func
-  }
-
-  private fun log(method: String, action: String) {
-    Log.d(TAG, "method : $method , action : $action")
   }
 
   /**
@@ -122,15 +116,29 @@ class TrackLayout : FrameLayout {
    */
   private fun wrapClick(view: View, ev: MotionEvent) {
     if (view.hasOnClickListeners()) {
-      val tag = view.getTag(R.id.android_tracker_click_listener)
-      if (tag !is OnClickListener) {
-        // 如果不存在，则重新设置
-        val listenerInfo = listenerInfoField.get(view)
-        listenerInfo?.javaClass?.getDeclaredField("mOnClickListener")?.let {
-          it.isAccessible = true
-          val clickWrapper = ClickWrapper(it.get(listenerInfo) as? OnClickListener, ev)
-          it.set(listenerInfo, clickWrapper)
-          view.setTag(R.id.android_tracker_click_listener, clickWrapper)
+      val viewInfo = listenerInfoField.get(view)
+      val clickInfo = viewInfo?.javaClass?.getDeclaredField("mOnClickListener")
+      val source = clickInfo?.get(viewInfo) as? OnClickListener
+      source?.let {
+        // 如果source已经是ClickWrapper则不需继续处理
+        if (it !is ClickWrapper) {
+          // 如果source不是ClickWrapper，则首先尝试复用原先已有的ClickWrapper（可能在RecyclerView中对View重新设置了OnClickListener，但是其ClickWrapper对象还在）
+          var wrapper = view.getTag(R.id.android_tracker_click_listener)
+          if (wrapper is ClickWrapper) {
+            // 如果原先已存在ClickWrapper
+            // 则对比原先ClickWrapper中的OnClickListener是否与source为同一个实例
+            if (wrapper.source != source) {
+              wrapper.source = source
+            }
+          } else {
+            // 如果原先不存在ClickWrapper，则创建ClickWrapper
+            wrapper = ClickWrapper(source, ev)
+            view.setTag(R.id.android_tracker_click_listener, wrapper)
+          }
+          clickInfo?.let {
+            it.isAccessible = true
+            it.set(viewInfo, wrapper)
+          }
         }
       }
     }
@@ -156,11 +164,11 @@ class TrackLayout : FrameLayout {
    * @param source View的原[View.OnClickListener]
    * @param ev 触发点击时的坐标位置
    */
-  private inner class ClickWrapper(val source: OnClickListener?,
+  private inner class ClickWrapper(var source: OnClickListener?,
       val ev: MotionEvent) : OnClickListener {
     override fun onClick(view: View) {
       source?.let {
-        source.onClick(view)
+        source?.onClick(view)
         clickFunc?.invoke(view, ev)
       }
 
