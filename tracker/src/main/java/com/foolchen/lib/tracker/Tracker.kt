@@ -1,6 +1,7 @@
 package com.foolchen.lib.tracker
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -11,10 +12,15 @@ import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.data.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.TAG
+import com.foolchen.lib.tracker.utils.getBuildInProperties
 import com.foolchen.lib.tracker.utils.log
+import com.foolchen.lib.tracker.utils.login as buildInLogin
+import com.foolchen.lib.tracker.utils.logout as buildInLogout
 
 /**
+ * 统计工具
  *
+ * 该工具用于统计的初始化、登录、注册等操作
  * @author chenchong
  * 2017/11/4
  * 上午11:17
@@ -38,7 +44,7 @@ object Tracker {
    * 固定需要获取的属性，该属性在初始化时完成
    * 这些属性在所有的事件中都会存在
    */
-  internal val regularProperties = HashMap<String, Any>()
+  internal val buildInProperties = HashMap<String, Any>()
   /**
    * 开发者在初始化时附加的属性
    * 这些属性在所有的事件中都会存在
@@ -52,6 +58,7 @@ object Tracker {
   private var isCleanWithBackground = true
 
   fun initialize(app: Application) {
+    buildInProperties.putAll(getBuildInProperties(app))
     app.registerActivityLifecycleCallbacks(ActivityLifeCycle())
   }
 
@@ -97,16 +104,16 @@ object Tracker {
 
   /**
    * 用户登录
-   * TODO
    */
-  fun login(userId: String) {}
+  fun login(userId: String) {
+    buildInLogin(buildInProperties, userId)
+  }
 
   /**
    * 用户登出
-   * TODO
    */
-  fun logout() {
-
+  fun logout(context: Context) {
+    buildInLogout(context, buildInProperties)
   }
 
   internal fun trackScreen(properties: Map<String, Any?>?) {

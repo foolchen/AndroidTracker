@@ -35,7 +35,7 @@ open class Event(
   init {
     id = generateId(distinctId + userId)
     properties = HashMap()
-    properties!!.putAll(Tracker.regularProperties)
+    properties!!.putAll(Tracker.buildInProperties)
     properties!!.putAll(Tracker.additionalProperties)
   }
 
