@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <ListView
+      android:id="@+id/lv"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:background="@color/colorAccent"
+      app:layout_constraintBottom_toTopOf="@+id/gv"
+      app:layout_constraintTop_toTopOf="parent"
+      />
+
+  <GridView
+      android:id="@+id/gv"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:background="@color/colorPrimary"
+      android:numColumns="3"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/lv"
+      />
+
+</android.support.constraint.ConstraintLayout>
