@@ -78,36 +78,41 @@ class TrackLayout : FrameLayout {
    */
   private fun findHitView(parent: View, x: Int, y: Int): View? {
     var hitView: View? = null
-    if (parent is AdapterView<*>) {
+    if (hitAdapterView(parent, x, y)) {
       // 如果是AdapterView（ListView、GridView等），则直接返回
       // AdapterView需要设置OnItemClickListener，而不是OnClickListener
       hitView = parent
-    } else if (parent is ViewGroup && parent.childCount > 0) {
-      val childCount = parent.childCount
-      for (i in 0 until childCount) {
-        val child = parent.getChildAt(i)
-        hitView = findHitView(child, x, y)
-        // 如果hitView不为空，则直接返回该View
-        if (hitView == null && parent.isClickable) {
-          // 如果没有查找到对应的可点击的View
-          // 并且如果parent可点击，则认为点击的就是parent
-          hitView = parent
-        } else if (hitView != null) {
-          break
+    } else if (parent !is AdapterView<*>) {
+      if (parent is ViewGroup && parent.childCount > 0) {
+        val childCount = parent.childCount
+        for (i in 0 until childCount) {
+          val child = parent.getChildAt(i)
+          hitView = findHitView(child, x, y)
+          // 如果hitView不为空，则直接返回该View
+          if (hitView == null && parent.isClickable) {
+            // 如果没有查找到对应的可点击的View
+            // 并且如果parent可点击，则认为点击的就是parent
+            hitView = parent
+          } else if (hitView != null) {
+            break
+          }
         }
+      } else if (parent.isClickable && hitPoint(parent, x, y)) {
+        // 如果已经没有子View/或者本身为View，并且View可点击，则认为点击的就是该View
+        hitView = parent
       }
-    } else if (parent.isClickable && isHitPoint(parent, x, y)) {
-      // 如果已经没有子View/或者本身为View，并且View可点击，则认为点击的就是该View
-      hitView = parent
     }
     return hitView
   }
 
 
+  private fun hitAdapterView(view: View, x: Int, y: Int): Boolean =
+      view is AdapterView<*> && hitPoint(view, x, y)
+
   /**
    * 判断一个View是否包含了对应的坐标
    */
-  private fun isHitPoint(view: View, x: Int, y: Int): Boolean {
+  private fun hitPoint(view: View, x: Int, y: Int): Boolean {
     view.getGlobalVisibleRect(rect)
     return rect.contains(x, y)
   }

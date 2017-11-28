@@ -122,7 +122,10 @@ object Tracker {
    * 对View的点击进行统计
    */
   internal fun trackView(view: View, ev: MotionEvent) {
-    if (view is TextView) {
+    if (mode != Mode.RELEASE) {
+      if (view is TextView) {
+        Log.d(TAG, "text = ${view.text} , (x,y) = (${ev.x},${ev.y})")
+      }
     }
   }
 
@@ -132,7 +135,10 @@ object Tracker {
   internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
       ev: MotionEvent) {
     if (mode != Mode.RELEASE) {
-      Log.d(TAG, "position = $position , id = $id")
+      if (view is TextView) {
+        Log.d(TAG,
+            "text = ${view.text} , position = $position , id = $id , (x,y) = (${ev.x},${ev.y})")
+      }
     }
   }
 
