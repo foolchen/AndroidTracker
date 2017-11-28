@@ -1,13 +1,16 @@
 package com.foolchen.lib.tracker
 
 import android.app.Application
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
 import android.widget.TextView
 import com.foolchen.lib.tracker.data.Event
 import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.data.VIEW_SCREEN
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
+import com.foolchen.lib.tracker.utils.TAG
 import com.foolchen.lib.tracker.utils.log
 
 /**
@@ -115,8 +118,21 @@ object Tracker {
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
   }
 
+  /**
+   * 对View的点击进行统计
+   */
   internal fun trackView(view: View, ev: MotionEvent) {
     if (view is TextView) {
+    }
+  }
+
+  /**
+   * 对AdapterView的点击进行统计
+   */
+  internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
+      ev: MotionEvent) {
+    if (mode != Mode.RELEASE) {
+      Log.d(TAG, "position = $position , id = $id")
     }
   }
 

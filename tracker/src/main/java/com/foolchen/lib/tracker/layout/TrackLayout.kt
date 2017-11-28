@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.FrameLayout
 import com.foolchen.lib.tracker.R
 
@@ -20,6 +21,7 @@ class TrackLayout : FrameLayout {
   private val TAG = TrackLayout::class.java.simpleName
   private val rect = Rect()
   private var clickFunc: ((View, MotionEvent) -> Unit)? = null
+  private var itemClickFunc: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)? = null
 
   private val listenerInfoField by lazy {
     // 通过反射拿到mListenerInfo，并且设置为可访问（用于后续替换点击事件）
@@ -40,9 +42,14 @@ class TrackLayout : FrameLayout {
       val ac = ev.action and MotionEvent.ACTION_MASK
       if (ac == MotionEvent.ACTION_DOWN) {
         val hitView = findHitView(rootView, ev.x.toInt(), ev.y.toInt())
-        if (hitView != null) {
-          // 查找到了点击的View
-          wrapClick(hitView, ev)
+        hitView?.let {
+          if (it is AdapterView<*>) {
+            // 包装OnItemClickListener
+            wrapItemClick(it, ev)
+          } else {
+            // 包装OnClickListener
+            wrapClick(hitView, ev)
+          }
         }
       }
     }
@@ -51,6 +58,11 @@ class TrackLayout : FrameLayout {
 
   internal fun registerClickFunc(func: ((View, MotionEvent) -> Unit)) {
     this@TrackLayout.clickFunc = func
+  }
+
+  internal fun registerItemClickFunc(
+      func: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)) {
+    this@TrackLayout.itemClickFunc = func
   }
 
   private fun log(method: String, action: String) {
@@ -66,7 +78,11 @@ class TrackLayout : FrameLayout {
    */
   private fun findHitView(parent: View, x: Int, y: Int): View? {
     var hitView: View? = null
-    if (parent is ViewGroup && parent.childCount > 0) {
+    if (parent is AdapterView<*>) {
+      // 如果是AdapterView（ListView、GridView等），则直接返回
+      // AdapterView需要设置OnItemClickListener，而不是OnClickListener
+      hitView = parent
+    } else if (parent is ViewGroup && parent.childCount > 0) {
       val childCount = parent.childCount
       for (i in 0 until childCount) {
         val child = parent.getChildAt(i)
@@ -116,19 +132,44 @@ class TrackLayout : FrameLayout {
   }
 
   /**
+   * 对AdapterView条目的点击监听进行包装,便于增加统计代码
+   */
+  private fun wrapItemClick(view: AdapterView<*>, ev: MotionEvent) {
+    val source = view.onItemClickListener
+    source?.let {
+      if (source !is ItemClickWrapper) {
+        // 如果原先设置的监听不为ItemClickWrapper类型，则对source进行包装
+        // 如果已经为ItemClickWrapper，则直接复用原先监听即可，不需要再次包装
+        view.onItemClickListener = ItemClickWrapper(source, ev)
+      }
+    }
+  }
+
+  /**
    * [View.OnClickListener]的包装类，内部包装了View的原[View.OnClickListener]，并且增加了点击统计
    *
-   * @param listener View的原[View.OnClickListener]
+   * @param source View的原[View.OnClickListener]
    * @param ev 触发点击时的坐标位置
    */
-  private inner class ClickWrapper(val listener: OnClickListener?,
+  private inner class ClickWrapper(val source: OnClickListener?,
       val ev: MotionEvent) : OnClickListener {
-    override fun onClick(view: View?) {
-      listener?.let {
-        listener.onClick(view)
-        view?.let { clickFunc?.invoke(view, ev) }
+    override fun onClick(view: View) {
+      source?.let {
+        source.onClick(view)
+        clickFunc?.invoke(view, ev)
       }
 
+    }
+  }
+
+  /**
+   * [AdapterView.OnItemClickListener]的包装类，内部包装了原监听器，并且增加了点击统计
+   */
+  private inner class ItemClickWrapper(val source: AdapterView.OnItemClickListener,
+      val ev: MotionEvent) : AdapterView.OnItemClickListener {
+    override fun onItemClick(adapterView: AdapterView<*>, view: View, position: Int, id: Long) {
+      source.onItemClick(adapterView, view, position, id)
+      itemClickFunc?.invoke(adapterView, view, position, id, ev)
     }
   }
 }

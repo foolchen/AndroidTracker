@@ -12,6 +12,9 @@ fun wrap(activity: Activity) {
     trackLayout.registerClickFunc { view, ev ->
       Tracker.trackView(view, ev)
     }
+    trackLayout.registerItemClickFunc { adapterView, view, position, id, ev ->
+      Tracker.trackAdapterView(adapterView, view, position, id, ev)
+    }
     decorView.addView(trackLayout,
         ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT))
