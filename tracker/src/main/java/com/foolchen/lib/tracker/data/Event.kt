@@ -1,6 +1,12 @@
 package com.foolchen.lib.tracker.data
 
 import com.foolchen.lib.tracker.*
+import com.foolchen.lib.tracker.Tracker.parent
+import com.foolchen.lib.tracker.Tracker.parentAlias
+import com.foolchen.lib.tracker.Tracker.referer
+import com.foolchen.lib.tracker.Tracker.refererAlias
+import com.foolchen.lib.tracker.Tracker.screenName
+import com.foolchen.lib.tracker.Tracker.screenNameAlias
 import com.foolchen.lib.tracker.utils.*
 
 /**
@@ -10,14 +16,10 @@ import com.foolchen.lib.tracker.utils.*
  * 下午2:48
  */
 open class Event(
-    @EventType private val event: String,
-    private val screenAlias: String, val screenName: String,
-    private val refererAlias: String, val referer: String,
-    private val parentAlias: String,
-    private val parent: String) {
+    @EventType private val event: String) {
 
-  var properties: HashMap<String, Any>? = null
-  val time = System.currentTimeMillis()
+  private var properties: HashMap<String, Any>? = null
+  private val time = System.currentTimeMillis()
 
   init {
     properties = HashMap()
@@ -43,7 +45,7 @@ open class Event(
     o.put(LIB, buildInLib)
     val properties = HashMap<String, Any>()
     properties.putAll(buildInProperties)
-    properties.put(SCREEN_NAME_ALIAS, screenAlias)
+    properties.put(SCREEN_NAME_ALIAS, screenNameAlias)
     properties.put(SCREEN_NAME, screenName)
     properties.put(REFERER_ALIAS, refererAlias)
     properties.put(REFERER, referer)
