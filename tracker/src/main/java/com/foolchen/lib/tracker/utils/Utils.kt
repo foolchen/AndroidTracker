@@ -81,6 +81,13 @@ internal fun Fragment.getTrackProperties(): Map<String, Unit> {
   return properties
 }
 
+internal fun trackEvent(event: Event) {
+  //TODO 此处进行数据的处理
+
+  // 打印日志
+  log(event)
+}
+
 
 internal fun log(event: Event) {
   if (Tracker.mode == Mode.DEBUG_ONLY) {

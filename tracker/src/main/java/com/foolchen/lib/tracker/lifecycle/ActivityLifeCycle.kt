@@ -31,6 +31,9 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   override fun onActivityStarted(activity: Activity?) {
+    if (refs.isEmpty()) {
+      Tracker.onForeground()
+    }
     activity?.let {
       refs.add(WeakReference(activity))
     }
@@ -63,7 +66,7 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
       }
     }
     if (refs.isEmpty()) {
-      Tracker.clean()
+      Tracker.onBackground()
     }
   }
 

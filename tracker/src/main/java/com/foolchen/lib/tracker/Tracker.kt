@@ -5,13 +5,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
-import com.foolchen.lib.tracker.data.Event
-import com.foolchen.lib.tracker.data.Mode
-import com.foolchen.lib.tracker.data.VIEW_SCREEN
+import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.TAG
 import com.foolchen.lib.tracker.utils.initBuildInProperties
-import com.foolchen.lib.tracker.utils.log
+import com.foolchen.lib.tracker.utils.trackEvent
 import com.foolchen.lib.tracker.utils.login as buildInLogin
 import com.foolchen.lib.tracker.utils.logout as buildInLogout
 
@@ -48,7 +46,10 @@ object Tracker {
   internal var channelId: String? = null
 
   internal var mode = Mode.RELEASE
-  internal var isCleanWithBackground = true
+  internal var isBackground = false
+  internal var clearOnBackground = true
+
+  internal var appStartTime = 0L
 
   internal var trackContext: TrackContext? = null
 
@@ -72,10 +73,10 @@ object Tracker {
   /**
    * 设置是否在App切换到后台时，将前向地址等信息清空
    * 该功能默认为开启
-   * @param clean 设置为true，则之前所有的前向地址、前向类名等都会在App被切换到后台时被清空，从后台切换回App时，访问的页面没有前向地址等信息
+   * @param clear 设置为true，则之前所有的前向地址、前向类名等都会在App被切换到后台时被清空，从后台切换回App时，访问的页面没有前向地址等信息
    */
-  fun cleanWithBackground(clean: Boolean) {
-    isCleanWithBackground = clean
+  fun clearOnBackground(clear: Boolean) {
+    clearOnBackground = clear
   }
 
   /**
@@ -120,7 +121,7 @@ object Tracker {
   internal fun trackScreen(properties: Map<String, Any>?) {
     val event = Event(VIEW_SCREEN)
     event.addProperties(properties)
-    log(event)
+    trackEvent(event)
 
     // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
   }
@@ -152,8 +153,15 @@ object Tracker {
   /**
    * 清空已保存的前向地址等状态
    */
-  internal fun clean() {
-    isCleanWithBackground.let {
+  internal fun onBackground() {
+    isBackground = true
+    val event = Event(APP_END)
+    val properties = HashMap<String, Any>()
+    properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
+    event.addProperties(properties)
+    trackEvent(event)
+
+    clearOnBackground.let {
       screenNameAlias = ""
       screenName = ""
       parentAlias = ""
@@ -163,4 +171,14 @@ object Tracker {
     }
   }
 
+  internal fun onForeground() {
+    appStartTime = System.currentTimeMillis()
+
+    val event = Event(APP_START)
+    val properties = HashMap<String, Any>()
+    properties.put(RESUME_FROM_BACKGROUND, isBackground)
+    event.addProperties(properties)
+    trackEvent(event)
+    isBackground = false
+  }
 }
