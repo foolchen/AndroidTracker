@@ -1,13 +1,10 @@
 package com.foolchen.lib.tracker
 
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
-import android.widget.TextView
 import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
-import com.foolchen.lib.tracker.utils.TAG
 import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.initBuildInProperties
 import com.foolchen.lib.tracker.utils.trackEvent
@@ -158,12 +155,10 @@ object Tracker {
    */
   internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
       ev: MotionEvent) {
-    if (mode != Mode.RELEASE) {
-      if (view is TextView) {
-        Log.d(TAG,
-            "text = ${view.text} , position = $position , id = $id , (x,y) = (${ev.x},${ev.y})")
-      }
-    }
+    val event = Event(CLICK)
+    val trackProperties = view.getTrackProperties(ev)
+    event.addProperties(trackProperties)
+    trackEvent(event)
   }
 
   /**
