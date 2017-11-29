@@ -1,6 +1,5 @@
 package com.foolchen.lib.tracker
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
@@ -49,11 +48,13 @@ object Tracker {
   internal var userId: String? = null
 
   internal var mode = Mode.RELEASE
-  private var isCleanWithBackground = true
+  internal var isCleanWithBackground = true
 
-  fun initialize(app: Application) {
-    //buildInProperties.putAll(getBuildInProperties(app))
-    initBuildInProperties(app)
+  internal var trackContext: TrackContext? = null
+
+  fun initialize(app: TrackContext) {
+    trackContext = app
+    initBuildInProperties(app.getApplicationContext())
     app.registerActivityLifecycleCallbacks(ActivityLifeCycle())
   }
 

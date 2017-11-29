@@ -15,7 +15,6 @@ import com.foolchen.lib.tracker.data.MNC
 import com.foolchen.lib.tracker.data.NetworkType
 
 
-internal val buildInObject: HashMap<String, Any> = HashMap()
 internal val buildInLib: HashMap<String, Any> = HashMap()
 internal val buildInProperties: HashMap<String, Any> = HashMap()
 
@@ -25,8 +24,6 @@ internal var buildInUUID = ""
  * 获取内置属性
  */
 internal fun initBuildInProperties(context: Context) {
-
-  buildInObject.put("\$time", System.currentTimeMillis())
 
   buildInLib.put("\$lib", "Android")
   buildInLib.put("\$lib_version", BuildConfig.VERSION_NAME)
@@ -42,9 +39,7 @@ internal fun initBuildInProperties(context: Context) {
   buildInProperties.put("\$os_version", Build.VERSION.RELEASE)
   buildInProperties.put("\$screen_height", context.getScreenWidth())
   buildInProperties.put("\$screen_width", context.getScreenHeight())
-  buildInProperties.put("\$wifi", context.isWiFi())
   buildInProperties.put("\$carrier", context.getMNC().desc())
-  buildInProperties.put("\$network_type", context.getNetworkType().desc())
   buildInProperties.put("\$imeicode", context.getIMEI())
   buildInProperties.put("\$device_id", context.getAndroidId())
 
@@ -103,7 +98,7 @@ private fun Context.getScreenHeight(): Int {
 /**
  * 判断当前网络状态是否为WiFi
  */
-private fun Context.isWiFi(): Boolean {
+internal fun Context.isWiFi(): Boolean {
   return if (ContextCompat.checkSelfPermission(this,
       Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
     val connectivityManager = this.getSystemService(
@@ -148,7 +143,7 @@ private fun Context.getMNC(): MNC {
  *
  * @return [NetType]
  */
-private fun Context.getNetworkType(): NetworkType {
+internal fun Context.getNetworkType(): NetworkType {
   if (ContextCompat.checkSelfPermission(this,
       Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
     if (isWiFi()) {

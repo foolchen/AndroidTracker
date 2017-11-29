@@ -36,7 +36,6 @@ open class Event(
 
   fun toJson(): String {
     val o = HashMap<String, Any>()
-    o.putAll(buildInObject)
     o.put(EVENT, event)
     o.put(TIME, time)
     o.put(DISTINCT_ID, Tracker.userId ?: buildInUUID)// 如果已登录，则该值是可以被替换掉的
@@ -50,6 +49,11 @@ open class Event(
     properties.put(REFERER, referer)
     properties.put(PARENT_ALIAS, parentAlias)
     properties.put(PARENT, parent)
+    Tracker.trackContext?.let {
+      properties.put(NETWORK_TYPE,
+          it.getApplicationContext().getNetworkType().desc())
+      properties.put(WIFI, it.getApplicationContext().isWiFi())
+    }
     this@Event.properties?.let {
       properties.putAll(it)
     }
