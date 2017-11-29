@@ -1,7 +1,8 @@
 package com.foolchen.lib.tracker
 
 internal const val SCREEN_NAME_ALIAS = "\$screen_name_alias"
-internal const val SCREEN_NAME = "\$screen_name"
+internal const val SCREEN_NAME = "\$title"
+internal const val TITLE = "\$screen_name"
 internal const val TIME = "\$time"
 internal const val EVENT = "event"
 internal const val REFERER_ALIAS = "\$referrer_alias"

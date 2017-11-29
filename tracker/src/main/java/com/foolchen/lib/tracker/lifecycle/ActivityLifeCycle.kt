@@ -8,6 +8,7 @@ import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.layout.wrap
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
+import com.foolchen.lib.tracker.utils.getTrackTitle
 import java.lang.ref.WeakReference
 
 /**
@@ -84,6 +85,7 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
     Tracker.referer = Tracker.screenName
     Tracker.screenNameAlias = activity.getTrackName()
     Tracker.screenName = activity.javaClass.canonicalName
+    Tracker.screenTitle = activity.getTrackTitle()
     Tracker.parentAlias = ""
     Tracker.parent = ""
     Tracker.trackScreen(activity.getTrackProperties())

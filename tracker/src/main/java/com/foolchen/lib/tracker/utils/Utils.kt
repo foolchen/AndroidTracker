@@ -53,6 +53,10 @@ internal fun Fragment.getTrackName(): String {
   return name!!
 }
 
+internal fun Activity?.getTrackTitle(): String = this?.title?.toString() ?: ""
+
+internal fun Fragment.getTrackTitle(): String = activity?.getTrackTitle() ?: ""
+
 /**
  * 获取Activity中需要的附加属性
  */

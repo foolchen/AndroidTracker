@@ -27,6 +27,7 @@ object Tracker {
   /**当前正在浏览的页面的名称*/
   internal var screenNameAlias: String = ""
   internal var screenName: String = ""
+  internal var screenTitle: String = ""
 
   /**当前正在浏览的页面所依附的页面*/
   internal var parentAlias: String = ""
@@ -42,7 +43,6 @@ object Tracker {
    */
   internal val additionalProperties = HashMap<String, Any>()
 
-  internal var userId: String? = null
   internal var channelId: String? = null
 
   internal var mode = Mode.RELEASE

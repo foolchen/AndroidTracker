@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
+import com.foolchen.lib.tracker.utils.getTrackTitle
 import java.lang.ref.WeakReference
 
 /**
@@ -61,26 +62,27 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
   }
 
   private fun track(f: Fragment) {
-    val trackName = f.getTrackName()
+    val screenName = f.getTrackName()
     Tracker.refererAlias = Tracker.screenNameAlias
     Tracker.referer = Tracker.screenName
-    Tracker.screenNameAlias = trackName
+    Tracker.screenNameAlias = screenName
     Tracker.screenName = f.javaClass.canonicalName
+    Tracker.screenTitle = f.getTrackTitle()
+    var parentAlias = ""
     var parent = ""
-    var parentClazz = ""
     val parentFragment = f.parentFragment
     if (parentFragment != null) {
-      parent = parentFragment.getTrackName()
-      parentClazz = parentFragment.javaClass.canonicalName
+      parentAlias = parentFragment.getTrackName()
+      parent = parentFragment.javaClass.canonicalName
     } else {
       val activity = f.activity
       if (activity != null) {
-        parent = activity.getTrackName()
-        parentClazz = activity.javaClass.canonicalName
+        parentAlias = activity.getTrackName()
+        parent = activity.javaClass.canonicalName
       }
     }
-    Tracker.parentAlias = parent
-    Tracker.parent = parentClazz
+    Tracker.parentAlias = parentAlias
+    Tracker.parent = parent
     Tracker.trackScreen(f.getTrackProperties())
   }
 
