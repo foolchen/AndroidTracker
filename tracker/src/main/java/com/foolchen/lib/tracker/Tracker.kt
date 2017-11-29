@@ -1,6 +1,5 @@
 package com.foolchen.lib.tracker
 
-import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -46,6 +45,7 @@ object Tracker {
   internal val additionalProperties = HashMap<String, Any>()
 
   internal var userId: String? = null
+  internal var channelId: String? = null
 
   internal var mode = Mode.RELEASE
   internal var isCleanWithBackground = true
@@ -108,8 +108,13 @@ object Tracker {
   /**
    * 用户登出
    */
-  fun logout(context: Context) {
-    buildInLogout(context)
+  fun logout() {
+    trackContext?.let { buildInLogout() }
+
+  }
+
+  fun setChannelId(channelId: String?) {
+    this.channelId = channelId
   }
 
   internal fun trackScreen(properties: Map<String, Any>?) {

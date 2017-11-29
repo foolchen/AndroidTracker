@@ -11,10 +11,12 @@ import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import com.foolchen.lib.tracker.BuildConfig
+import com.foolchen.lib.tracker.DISTINCT_ID
 import com.foolchen.lib.tracker.data.MNC
 import com.foolchen.lib.tracker.data.NetworkType
 
 
+internal val buildInObject: HashMap<String, Any> = HashMap()
 internal val buildInLib: HashMap<String, Any> = HashMap()
 internal val buildInProperties: HashMap<String, Any> = HashMap()
 
@@ -24,6 +26,8 @@ internal var buildInUUID = ""
  * 获取内置属性
  */
 internal fun initBuildInProperties(context: Context) {
+  buildInUUID = context.getUUID()
+  buildInObject.put(DISTINCT_ID, buildInUUID)
 
   buildInLib.put("\$lib", "Android")
   buildInLib.put("\$lib_version", BuildConfig.VERSION_NAME)
@@ -42,16 +46,14 @@ internal fun initBuildInProperties(context: Context) {
   buildInProperties.put("\$carrier", context.getMNC().desc())
   buildInProperties.put("\$imeicode", context.getIMEI())
   buildInProperties.put("\$device_id", context.getAndroidId())
-
-  buildInUUID = context.getUUID()
 }
 
 internal fun login(userId: String) {
-  buildInProperties.put("\$distinct_id", userId)
+  buildInObject.put(DISTINCT_ID, userId)
 }
 
-internal fun logout(context: Context) {
-  buildInProperties.put("\$distinct_id", context.getUUID())
+internal fun logout() {
+  buildInObject.put(DISTINCT_ID, buildInUUID)
 }
 
 /**
