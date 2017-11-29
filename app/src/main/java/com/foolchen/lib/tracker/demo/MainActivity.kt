@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.foolchen.lib.tracker.demo.data.Demo
 import com.foolchen.lib.tracker.demo.fragments.AdapterViewFragment
+import com.foolchen.lib.tracker.demo.fragments.MockLoginFragment
 import com.foolchen.lib.tracker.demo.fragments.SimpleFragment
 import com.foolchen.lib.tracker.demo.fragments.ViewPagerFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,7 +34,9 @@ class MainActivity : BaseActivity() {
             Demo("ViewPager+Fragment+内嵌Fragment", ViewPagerFragment::class.java.name,
                 buildArgs(false, true)),
             Demo("AdapterView点击事件Fragment",
-                AdapterViewFragment::class.java.name, buildArgs(false, false))
+                AdapterViewFragment::class.java.name, buildArgs(false, false)),
+            Demo("模拟登录及渠道号",
+                MockLoginFragment::class.java.name, buildArgs(false, false))
         )
     )
 

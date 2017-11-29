@@ -9,4 +9,8 @@
   <string name="text_vp_item_desc_mask">ViewPager项目 %1$d</string>
   <string name="text_vp_fragment">ViewPager所在Fragment</string>
   <string name="text_vp_nested_fragment_mask">ViewPager项目%1$d#内嵌Fragment</string>
+
+  <string name="text_input_user_id_here">这里填写用户id，留空时取消登录</string>
+  <string name="text_input_channel_id_here">这里填写渠道号</string>
+  <string name="text_apply">应用</string>
 </resources>

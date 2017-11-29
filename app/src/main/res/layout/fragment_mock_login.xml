@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/til_user_id"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/tie_user_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/text_input_user_id_here"
+        />
+  </android.support.design.widget.TextInputLayout>
+
+  <Button
+      android:id="@+id/btn_apply_user_id"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/text_apply"
+      app:layout_constraintTop_toBottomOf="@+id/til_user_id"
+      />
+
+  <android.support.design.widget.TextInputLayout
+      android:id="@+id/til_channel_id"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintTop_toBottomOf="@+id/btn_apply_user_id"
+      >
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/tie_channel_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/text_input_channel_id_here"
+        />
+  </android.support.design.widget.TextInputLayout>
+
+  <Button
+      android:id="@+id/btn_apply_channel_id"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/text_apply"
+      app:layout_constraintTop_toBottomOf="@+id/til_channel_id"
+      />
+
+</android.support.constraint.ConstraintLayout>
