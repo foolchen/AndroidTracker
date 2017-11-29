@@ -17,3 +17,9 @@ internal const val WIFI = "\$wifi"
 internal const val CHANNEL = "\$channel"
 internal const val RESUME_FROM_BACKGROUND = "\$resume_from_background"
 internal const val EVENT_DURATION = "\$event_duration"
+
+// 以下为点击元素用字段
+internal const val ELEMENT_TYPE = "\$element_type"
+internal const val ELEMENT_CONTENT = "\$element_content"
+internal const val ELEMENT_X = "\$element_x"
+internal const val ELEMENT_Y = "\$element_y"

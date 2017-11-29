@@ -18,22 +18,22 @@ import com.foolchen.lib.tracker.utils.*
 open class Event(
     @EventType private val event: String) {
 
-  private var properties: HashMap<String, Any>? = null
+  private val properties = HashMap<String, Any>()
   private val time = System.currentTimeMillis()
 
   init {
-    properties = HashMap()
-    properties!!.putAll(Tracker.additionalProperties)
+    Tracker.additionalProperties.filter { it.value != null }.forEach {
+      this@Event.properties.put(it.key, it.value!!)
+    }
   }
 
-  fun addProperties(properties: Map<String, Any>?) {
+  fun addProperties(properties: Map<String, Any?>?) {
     if (properties == null) {
       return
     }
-    if (this.properties == null) {
-      this.properties = HashMap()
+    properties.filter { it.value != null }.forEach {
+      this@Event.properties.put(it.key, it.value!!)
     }
-    this.properties?.putAll(properties)
   }
 
   fun toJson(): String {
@@ -60,7 +60,7 @@ open class Event(
     Tracker.channelId?.let {
       properties.put(CHANNEL, it)
     }
-    this@Event.properties?.let {
+    this@Event.properties.let {
       properties.putAll(it)
     }
 

@@ -8,8 +8,11 @@ import android.widget.TextView
 import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
 import com.foolchen.lib.tracker.utils.TAG
+import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.initBuildInProperties
 import com.foolchen.lib.tracker.utils.trackEvent
+import java.util.*
+import kotlin.collections.HashMap
 import com.foolchen.lib.tracker.utils.login as buildInLogin
 import com.foolchen.lib.tracker.utils.logout as buildInLogout
 
@@ -41,7 +44,12 @@ object Tracker {
    * 开发者在初始化时附加的属性
    * 这些属性在所有的事件中都会存在
    */
-  internal val additionalProperties = HashMap<String, Any>()
+  internal val additionalProperties = HashMap<String, Any?>()
+
+  /**
+   * 用于保存各个元素需要的附加属性
+   */
+  internal val elementsProperties = WeakHashMap<View, Map<String, Any?>?>()
 
   internal var channelId: String? = null
 
@@ -118,7 +126,16 @@ object Tracker {
     this.channelId = channelId
   }
 
-  internal fun trackScreen(properties: Map<String, Any>?) {
+  /**
+   * 为要统计的元素增加需要附加的属性
+   */
+  fun trackView(view: View, properties: Map<String, Any?>?) {
+    properties?.let {
+      elementsProperties.put(view, properties)
+    }
+  }
+
+  internal fun trackScreen(properties: Map<String, Any?>?) {
     val event = Event(VIEW_SCREEN)
     event.addProperties(properties)
     trackEvent(event)
@@ -130,11 +147,10 @@ object Tracker {
    * 对View的点击进行统计
    */
   internal fun trackView(view: View, ev: MotionEvent) {
-    if (mode != Mode.RELEASE) {
-      if (view is TextView) {
-        Log.d(TAG, "text = ${view.text} , (x,y) = (${ev.x},${ev.y})")
-      }
-    }
+    val event = Event(CLICK)
+    val trackProperties = view.getTrackProperties(ev)
+    event.addProperties(trackProperties)
+    trackEvent(event)
   }
 
   /**
