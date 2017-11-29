@@ -118,8 +118,7 @@ object Tracker {
   }
 
   internal fun trackScreen(properties: Map<String, Any>?) {
-    val event = Event(VIEW_SCREEN, screenNameAlias,
-        screenName, refererAlias, referer, parentAlias, parent)
+    val event = Event(VIEW_SCREEN)
     event.addProperties(properties)
     log(event)
 
