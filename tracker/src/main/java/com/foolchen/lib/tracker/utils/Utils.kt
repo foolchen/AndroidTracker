@@ -95,10 +95,10 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   if (this is TextView) {
     properties.put(ELEMENT_CONTENT, this.text?.toString() ?: "")
   }
-  ev?.let {
+  /*ev?.let {
     properties.put(ELEMENT_X, ev.x)
     properties.put(ELEMENT_Y, ev.y)
-  }
+  }*/
 
   // 然后获取开发者附加的属性
   val additionalProperties = Tracker.elementsProperties[this]

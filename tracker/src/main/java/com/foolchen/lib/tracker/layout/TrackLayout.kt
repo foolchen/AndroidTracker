@@ -83,13 +83,15 @@ class TrackLayout : FrameLayout {
           val child = parent.getChildAt(i)
           hitView = findHitView(child, x, y)
           // 如果hitView不为空，则直接返回该View
-          if (hitView == null && parent.isClickable) {
-            // 如果没有查找到对应的可点击的View
-            // 并且如果parent可点击，则认为点击的就是parent
-            hitView = parent
-          } else if (hitView != null) {
+          if (hitView != null) {
             break
           }
+        }
+
+        // 如果查找了所有的子View，都没有找到可点击的View
+        if (hitView == null && parent.isClickable) {
+          // 此时如果parent可点击，则认为点击的就是parent
+          hitView = parent
         }
       } else if (parent.isClickable && hitPoint(parent, x, y)) {
         // 如果已经没有子View/或者本身为View，并且View可点击，则认为点击的就是该View
