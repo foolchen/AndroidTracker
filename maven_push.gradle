@@ -1,12 +1,15 @@
-import java.text.SimpleDateFormat
-
 apply plugin: 'maven'
 // 对库文件进行数字签名的插件,可以通过签名知道谁创建了这个库文件,签名的时间等等信息
 apply plugin: 'signing'
 
 // 从maven_push.properties中读取定义的属性
+File file = project.rootProject.file('maven_push.properties')
+if (!file.exists()) {
+  // 如果文件不存在，则不再进行push处理
+  return
+}
 Properties configs = new Properties()
-configs.load(project.rootProject.file('maven_push.properties').newDataInputStream())
+configs.load(file.newDataInputStream())
 
 def maven_repo_user_name = configs.getProperty('NEXUS_USERNAME')
 def maven_repo_password = configs.getProperty('NEXUS_PASSWORD')
