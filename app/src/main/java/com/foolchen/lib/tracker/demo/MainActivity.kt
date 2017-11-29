@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.foolchen.lib.tracker.demo.data.Demo
-import com.foolchen.lib.tracker.demo.fragments.AdapterViewFragment
-import com.foolchen.lib.tracker.demo.fragments.MockLoginFragment
-import com.foolchen.lib.tracker.demo.fragments.SimpleFragment
-import com.foolchen.lib.tracker.demo.fragments.ViewPagerFragment
+import com.foolchen.lib.tracker.demo.fragments.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -36,7 +33,9 @@ class MainActivity : BaseActivity() {
             Demo("AdapterView点击事件Fragment",
                 AdapterViewFragment::class.java.name, buildArgs(false, false)),
             Demo("模拟登录及渠道号",
-                MockLoginFragment::class.java.name, buildArgs(false, false))
+                MockLoginFragment::class.java.name, buildArgs(false, false)),
+            Demo("ButterKnife点击事件测试",
+                ButterKnifeFragment::class.java.name, buildArgs(false, false))
         )
     )
 

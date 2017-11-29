@@ -13,4 +13,8 @@
   <string name="text_input_user_id_here">这里填写用户id，留空时取消登录</string>
   <string name="text_input_channel_id_here">这里填写渠道号</string>
   <string name="text_apply">应用</string>
+
+  <string name="text_apply_data">填充数据</string>
+  <string name="text_clickable_mask">可点击条目%1$s</string>
+  <string name="text_not_clickable_mask">不可点击条目%1$s</string>
 </resources>

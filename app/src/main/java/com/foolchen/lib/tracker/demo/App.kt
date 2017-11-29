@@ -15,6 +15,8 @@ class App : Application(), TrackContext {
   override fun onCreate() {
     super.onCreate()
     Tracker.initialize(this)
+    Tracker.addProperty("附加的属性1", "附加的属性1")
+    Tracker.addProperty("附加的属性2", "附加的属性2")
     Tracker.setMode(Mode.DEBUG_ONLY)
   }
 }
