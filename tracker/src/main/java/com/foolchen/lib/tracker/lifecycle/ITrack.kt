@@ -15,5 +15,5 @@ interface ITrack {
   /**
    * 获取当前页面需要附加的参数
    */
-  fun getTrackProperties(): Map<String, Any?>?
+  fun getTrackProperties(): Map<String, *>?
 }
