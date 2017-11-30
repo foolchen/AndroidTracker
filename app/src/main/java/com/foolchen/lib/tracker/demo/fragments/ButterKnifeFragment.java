@@ -14,7 +14,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import com.foolchen.lib.tracker.Tracker;
 import com.foolchen.lib.tracker.demo.R;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 验证ButterKnife点击的Fragment
@@ -88,6 +91,9 @@ public class ButterKnifeFragment extends BaseFragment {
     @OnClick(R.id.tv_clickable) public void click(View view) {
       Toast.makeText(view.getContext(), ((TextView) view).getText().toString(), Toast.LENGTH_SHORT)
           .show();
+      Map<String, Object> map = new HashMap<>();
+      map.put("附加的View属性", view.toString());
+      Tracker.INSTANCE.trackView(view, map);
     }
   }
 }

@@ -18,7 +18,7 @@ open class BaseActivity : AppCompatActivity(), ITrack, IFragments {
   ///////////////////////////////////////////////////////////////////////////
   override fun getTrackName(): String? = null
 
-  override fun getTrackProperties(): Map<String, Unit>? = null
+  override fun getTrackProperties(): Map<String, Any?>? = null
 
   ///////////////////////////////////////////////////////////////////////////
   // IFragments接口用于确定当前Activity中是否包含Fragment

@@ -32,7 +32,7 @@ open class BaseFragment : Fragment(), ITrack, IFragments, IFragmentVisibleHelper
   ///////////////////////////////////////////////////////////////////////////
   override fun getTrackName(): String? = null
 
-  override fun getTrackProperties(): Map<String, Unit>? = null
+  override fun getTrackProperties(): Map<String, Any?>? = null
 
   ///////////////////////////////////////////////////////////////////////////
   // IFragments接口用于确定当前Fragment中是否包含子Fragment

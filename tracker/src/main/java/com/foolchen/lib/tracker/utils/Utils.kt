@@ -6,7 +6,9 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
-import com.foolchen.lib.tracker.*
+import com.foolchen.lib.tracker.ELEMENT_CONTENT
+import com.foolchen.lib.tracker.ELEMENT_TYPE
+import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.Event
 import com.foolchen.lib.tracker.data.Mode
 import com.foolchen.lib.tracker.lifecycle.ITrack
@@ -66,9 +68,10 @@ internal fun Fragment.getTrackTitle(): String = activity?.getTrackTitle() ?: ""
 internal fun Activity.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
   if (this is ITrack) {
-    val trackProperties = this.getTrackProperties()
-    if (trackProperties != null) {
-      properties.putAll(trackProperties)
+    this.getTrackProperties()?.let {
+      it.filter { it.value != null }.forEach {
+        properties.put(it.key, it.value!!)
+      }
     }
   }
   return properties
@@ -80,9 +83,10 @@ internal fun Activity.getTrackProperties(): Map<String, Any> {
 internal fun Fragment.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
   if (this is ITrack) {
-    val trackProperties = this.getTrackProperties()
-    if (trackProperties != null) {
-      properties.putAll(trackProperties)
+    this.getTrackProperties()?.let {
+      it.filter { it.value != null }.forEach {
+        properties.put(it.key, it.value!!)
+      }
     }
   }
   return properties
