@@ -5,6 +5,7 @@ import com.foolchen.lib.tracker.Tracker.parent
 import com.foolchen.lib.tracker.Tracker.parentAlias
 import com.foolchen.lib.tracker.Tracker.referer
 import com.foolchen.lib.tracker.Tracker.refererAlias
+import com.foolchen.lib.tracker.Tracker.screenName
 import com.foolchen.lib.tracker.Tracker.screenNameAlias
 import com.foolchen.lib.tracker.Tracker.screenTitle
 import com.foolchen.lib.tracker.utils.*
@@ -46,7 +47,7 @@ open class Event(
     val properties = HashMap<String, Any>()
     properties.putAll(buildInProperties)
     properties.put(SCREEN_NAME_ALIAS, screenNameAlias)
-    properties.put(SCREEN_NAME, screenTitle)
+    properties.put(SCREEN_NAME, screenName)
     properties.put(TITLE, screenTitle)
     properties.put(REFERER_ALIAS, refererAlias)
     properties.put(REFERER, referer)

@@ -100,7 +100,7 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     }.filter {
       // 此处用于过滤掉不可见的Fragment
       val child = it.get()
-      child != null && !child.isHidden && child.userVisibleHint
+      child != null && !child.isHidden && child.userVisibleHint && checkParentVisible(child)
     }.forEach {
       val child = it.get()
       child?.let { children.add(child) }
@@ -153,6 +153,18 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
         checkParent(parentFragment, parent)
       }
     } else {// 如果不存在父Fragment，则直接返回false
+      false
+    }
+  }
+
+  // TODO: 2017/11/30 chenchong 检查一个Fragment的父级Fragment是否可见
+  private fun checkParentVisible(f: Fragment): Boolean {
+    val parent = f.parentFragment
+    return if (parent == null) {
+      true
+    } else if (!parent.isHidden && parent.userVisibleHint) {
+      checkParentVisible(parent)
+    } else {
       false
     }
   }
