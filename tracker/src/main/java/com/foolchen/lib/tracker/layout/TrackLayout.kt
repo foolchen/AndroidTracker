@@ -78,6 +78,7 @@ class TrackLayout : FrameLayout {
    * 如果[ViewGroup]本身可点击，则会将[ViewGroup]当做点击的[View]
    */
   private fun findHitView(parent: View, x: Int, y: Int): ArrayList<View> {
+    // TODO 此处可以尝试查找不被覆盖的View，如果View被覆盖，则继续查找下一个
     /*var hitView: View? = null
     if (hitAdapterView(parent, x, y)) {
       // 如果是AdapterView（ListView、GridView等），则直接返回
