@@ -6,7 +6,7 @@ package com.foolchen.lib.tracker.data
  * 2017/11/27
  * 上午11:44
  */
-enum class Mode {
+enum class TrackerMode {
   /**
    * 仅调试模式，数据不入库，可在后台实时追踪日志输出
    *

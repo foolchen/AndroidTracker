@@ -9,9 +9,9 @@ import android.widget.TextView
 import com.foolchen.lib.tracker.ELEMENT_CONTENT
 import com.foolchen.lib.tracker.ELEMENT_TYPE
 import com.foolchen.lib.tracker.Tracker
-import com.foolchen.lib.tracker.data.Event
-import com.foolchen.lib.tracker.data.Mode
-import com.foolchen.lib.tracker.lifecycle.ITrack
+import com.foolchen.lib.tracker.data.TrackerEvent
+import com.foolchen.lib.tracker.data.TrackerMode
+import com.foolchen.lib.tracker.lifecycle.ITrackerHelper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
@@ -29,7 +29,7 @@ const val TAG = "AndroidTracker"
  */
 internal fun Activity.getTrackName(): String {
   var name: String? = null
-  if (this is ITrack) {
+  if (this is ITrackerHelper) {
     name = this.getTrackName()
   }
   if (name.isNullOrEmpty()) {
@@ -46,7 +46,7 @@ internal fun Activity.getTrackName(): String {
  */
 internal fun Fragment.getTrackName(): String {
   var name: String? = null
-  if (this is ITrack) {
+  if (this is ITrackerHelper) {
     name = this.getTrackName()
   }
   if (name.isNullOrEmpty()) {
@@ -67,7 +67,7 @@ internal fun Fragment.getTrackTitle(): String = activity?.getTrackTitle() ?: ""
  */
 internal fun Activity.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
-  if (this is ITrack) {
+  if (this is ITrackerHelper) {
     this.getTrackProperties()?.let {
       it.filter { it.value != null }.forEach {
         properties.put(it.key, it.value!!)
@@ -82,7 +82,7 @@ internal fun Activity.getTrackProperties(): Map<String, Any> {
  */
 internal fun Fragment.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
-  if (this is ITrack) {
+  if (this is ITrackerHelper) {
     this.getTrackProperties()?.let {
       it.filter { it.value != null }.forEach {
         properties.put(it.key, it.value!!)
@@ -113,7 +113,7 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   return properties
 }
 
-internal fun trackEvent(event: Event) {
+internal fun trackEvent(event: TrackerEvent) {
   //TODO 此处进行数据的处理
 
   // 打印日志
@@ -121,10 +121,10 @@ internal fun trackEvent(event: Event) {
 }
 
 
-internal fun log(event: Event) {
-  if (Tracker.mode == Mode.DEBUG_ONLY) {
+internal fun log(event: TrackerEvent) {
+  if (Tracker.mode == TrackerMode.DEBUG_ONLY) {
     log(event.toJson())
-  } else if (Tracker.mode == Mode.DEBUG_TRACK) {
+  } else if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
     log(event.toJson())
   }
 }

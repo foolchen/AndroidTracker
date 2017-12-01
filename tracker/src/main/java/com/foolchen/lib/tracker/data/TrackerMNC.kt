@@ -6,7 +6,7 @@ package com.foolchen.lib.tracker.data
  * 2017/11/28
  * 下午4:51
  */
-internal enum class MNC {
+internal enum class TrackerMNC {
   /** 其他  */
   OTHER {
     override fun desc(): String = "未知"

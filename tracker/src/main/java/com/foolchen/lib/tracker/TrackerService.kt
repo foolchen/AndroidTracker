@@ -6,6 +6,6 @@ package com.foolchen.lib.tracker
  * 2017/11/4
  * 下午3:13
  */
-class Service {
+class TrackerService {
   
 }

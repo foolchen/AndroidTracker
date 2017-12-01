@@ -16,7 +16,7 @@ import com.foolchen.lib.tracker.utils.*
  * 2017/11/4
  * 下午2:48
  */
-open class Event(
+open class TrackerEvent(
     @EventType private val event: String) {
 
   private val properties = HashMap<String, Any>()
@@ -24,7 +24,7 @@ open class Event(
 
   init {
     Tracker.additionalProperties.filter { it.value != null }.forEach {
-      this@Event.properties.put(it.key, it.value!!)
+      this@TrackerEvent.properties.put(it.key, it.value!!)
     }
   }
 
@@ -33,7 +33,7 @@ open class Event(
       return
     }
     properties.filter { it.value != null }.forEach {
-      this@Event.properties.put(it.key, it.value!!)
+      this@TrackerEvent.properties.put(it.key, it.value!!)
     }
   }
 
@@ -61,7 +61,7 @@ open class Event(
     Tracker.channelId?.let {
       properties.put(CHANNEL, it)
     }
-    this@Event.properties.let {
+    this@TrackerEvent.properties.let {
       properties.putAll(it)
     }
 

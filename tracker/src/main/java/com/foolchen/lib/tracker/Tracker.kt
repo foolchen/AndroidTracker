@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import com.foolchen.lib.tracker.data.*
-import com.foolchen.lib.tracker.lifecycle.ActivityLifeCycle
+import com.foolchen.lib.tracker.lifecycle.TrackerActivityLifeCycle
 import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.initBuildInProperties
 import com.foolchen.lib.tracker.utils.trackEvent
@@ -50,28 +50,28 @@ object Tracker {
 
   internal var channelId: String? = null
 
-  internal var mode = Mode.RELEASE
+  internal var mode = TrackerMode.RELEASE
   internal var isBackground = false
   internal var clearOnBackground = true
 
   internal var appStartTime = 0L
 
-  internal var trackContext: TrackContext? = null
+  internal var trackContext: TrackerContext? = null
 
-  fun initialize(app: TrackContext) {
+  fun initialize(app: TrackerContext) {
     trackContext = app
     initBuildInProperties(app.getApplicationContext())
-    app.registerActivityLifecycleCallbacks(ActivityLifeCycle())
+    app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())
   }
 
   /**
    * 设置统计的模式
-   * @see [Mode]]
-   * @see [Mode.DEBUG_ONLY]
-   * @see [Mode.DEBUG_TRACK]
-   * @see [Mode.RELEASE]
+   * @see [TrackerMode]]
+   * @see [TrackerMode.DEBUG_ONLY]
+   * @see [TrackerMode.DEBUG_TRACK]
+   * @see [TrackerMode.RELEASE]
    */
-  fun setMode(mode: Mode) {
+  fun setMode(mode: TrackerMode) {
     this@Tracker.mode = mode
   }
 
@@ -133,7 +133,7 @@ object Tracker {
   }
 
   internal fun trackScreen(properties: Map<String, Any?>?) {
-    val event = Event(VIEW_SCREEN)
+    val event = TrackerEvent(VIEW_SCREEN)
     event.addProperties(properties)
     trackEvent(event)
 
@@ -144,7 +144,7 @@ object Tracker {
    * 对View的点击进行统计
    */
   internal fun trackView(view: View, ev: MotionEvent) {
-    val event = Event(CLICK)
+    val event = TrackerEvent(CLICK)
     val trackProperties = view.getTrackProperties(ev)
     event.addProperties(trackProperties)
     trackEvent(event)
@@ -155,7 +155,7 @@ object Tracker {
    */
   internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
       ev: MotionEvent) {
-    val event = Event(CLICK)
+    val event = TrackerEvent(CLICK)
     val trackProperties = view.getTrackProperties(ev)
     event.addProperties(trackProperties)
     trackEvent(event)
@@ -166,7 +166,7 @@ object Tracker {
    */
   internal fun onBackground() {
     isBackground = true
-    val event = Event(APP_END)
+    val event = TrackerEvent(APP_END)
     val properties = HashMap<String, Any>()
     properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
     event.addProperties(properties)
@@ -185,7 +185,7 @@ object Tracker {
   internal fun onForeground() {
     appStartTime = System.currentTimeMillis()
 
-    val event = Event(APP_START)
+    val event = TrackerEvent(APP_START)
     val properties = HashMap<String, Any>()
     properties.put(RESUME_FROM_BACKGROUND, isBackground)
     event.addProperties(properties)

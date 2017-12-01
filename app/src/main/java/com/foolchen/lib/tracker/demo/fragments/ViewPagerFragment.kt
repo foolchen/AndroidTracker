@@ -52,7 +52,7 @@ class ViewPagerFragment : BaseFragment() {
     return super.onOptionsItemSelected(item)
   }
 
-  override fun hasChildFragments(): Boolean = true
+  override fun isIgnored(): Boolean = true
 }
 
 private class VpAdapter : FragmentStatePagerAdapter {

@@ -18,8 +18,8 @@ import java.lang.ref.WeakReference
  * 2017/11/4
  * 上午11:26
  */
-class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
-  private val fragmentLifeCycle = FragmentLifeCycle()
+class TrackerActivityLifeCycle : Application.ActivityLifecycleCallbacks {
+  private val fragmentLifeCycle = TrackerFragmentLifeCycle()
   private val refs = ArrayList<WeakReference<Activity>>()
 
   override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
@@ -42,8 +42,8 @@ class ActivityLifeCycle : Application.ActivityLifecycleCallbacks {
 
   override fun onActivityResumed(activity: Activity?) {
     if (activity != null) {
-      if (activity is IFragments) {
-        if (!activity.hasChildFragments()) {
+      if (activity is ITrackerIgnore) {
+        if (!activity.isIgnored()) {
           // 内部没有Fragment，直接进行统计
           track(activity)
         }

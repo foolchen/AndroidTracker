@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference
  * 2017/11/4
  * 上午11:27
  */
-class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmentVisible {
+class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), ITrackerFragmentVisible {
 
   private val refs = ArrayList<WeakReference<Fragment>>()
 
@@ -100,14 +100,14 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
     }.filter {
       // 此处用于过滤掉不可见的Fragment
       val child = it.get()
-      child != null && !child.isHidden && child.userVisibleHint && checkParentVisible(child)
+      child != null && !child.isHidden && child.userVisibleHint && isAncestorVisible(child)
     }.forEach {
       val child = it.get()
       child?.let { children.add(child) }
     }
 
     // 如果没有符合需要的children，则其自身就为符合需要的Fragment
-    if (children.isEmpty()) {
+    if (children.isEmpty() && !isParentFragment(parent)) {
       children.add(parent)
     }
 
@@ -135,11 +135,27 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
   }
 
   /**
-   * 判断是否为其他Fragment的父级
-   * @param f 需要检查的Fragment
-   * @return 在[f]实现了[IFragments]接口，并且[IFragments.hasChildFragments]值为true时，返回true；其他情况下返回false
+   * 检查一个Fragment的祖先是否都可见
+   * @param f 要检查的Fragment
+   * @return 如果祖先都可见则返回true；如果不存在祖先（其直接宿主为Activity），则返回true；否则返回false
    */
-  private fun isParentFragment(f: Fragment): Boolean = f is IFragments && f.hasChildFragments()
+  private fun isAncestorVisible(f: Fragment): Boolean {
+    val parent = f.parentFragment
+    return if (parent == null) {
+      true
+    } else if (!parent.isHidden && parent.userVisibleHint) {
+      isAncestorVisible(parent)
+    } else {
+      false
+    }
+  }
+
+  /**
+   * 判断是否为其他Fragment的父级（实现了[IFragment]接口，并且[ITrackerIgnore.isIgnored]的值为true）
+   * @param f 需要检查的Fragment
+   * @return 在[f]实现了[ITrackerIgnore]接口，并且[ITrackerIgnore.isIgnored]值为true时，返回true；其他情况下返回false
+   */
+  private fun isParentFragment(f: Fragment): Boolean = f is ITrackerIgnore && f.isIgnored()
 
   /**
    * 检查一个[parent]是否是[child]的父Fragment/祖先Fragment
@@ -153,18 +169,6 @@ class FragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), IFragmen
         checkParent(parentFragment, parent)
       }
     } else {// 如果不存在父Fragment，则直接返回false
-      false
-    }
-  }
-
-  // TODO: 2017/11/30 chenchong 检查一个Fragment的父级Fragment是否可见
-  private fun checkParentVisible(f: Fragment): Boolean {
-    val parent = f.parentFragment
-    return if (parent == null) {
-      true
-    } else if (!parent.isHidden && parent.userVisibleHint) {
-      checkParentVisible(parent)
-    } else {
       false
     }
   }

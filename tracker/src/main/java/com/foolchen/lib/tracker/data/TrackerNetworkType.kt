@@ -6,7 +6,7 @@ package com.foolchen.lib.tracker.data
  * 2017/11/28
  * 下午5:11
  */
-internal enum class NetworkType() {
+internal enum class TrackerNetworkType() {
   /** 未知类型  */
   UNKNOWN {
     override fun desc(): String = "未知"

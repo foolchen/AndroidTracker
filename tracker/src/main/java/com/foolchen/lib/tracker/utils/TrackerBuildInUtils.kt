@@ -12,8 +12,8 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import com.foolchen.lib.tracker.BuildConfig
 import com.foolchen.lib.tracker.DISTINCT_ID
-import com.foolchen.lib.tracker.data.MNC
-import com.foolchen.lib.tracker.data.NetworkType
+import com.foolchen.lib.tracker.data.TrackerMNC
+import com.foolchen.lib.tracker.data.TrackerNetworkType
 
 
 internal val buildInObject: HashMap<String, Any> = HashMap()
@@ -113,7 +113,7 @@ internal fun Context.isWiFi(): Boolean {
   }
 }
 
-private fun Context.getMNC(): MNC {
+private fun Context.getMNC(): TrackerMNC {
   if (ContextCompat.checkSelfPermission(this,
       Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
     val telManager = this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
@@ -122,20 +122,20 @@ private fun Context.getMNC(): MNC {
     try {//防止启动就崩溃，这里加上异常处理
       val mnc = Integer.parseInt(operator.substring(3))//，移动网络号码（中国移动为0,2，中国联通为1，中国电信为3）；
       when (mnc) {
-        0 -> return MNC.CMCC
-        1 -> return MNC.CUCC
+        0 -> return TrackerMNC.CMCC
+        1 -> return TrackerMNC.CUCC
         2 //因为移动网络编号46000下的IMSI已经用完，所以虚拟了一个46002编号，134/159号段使用了此编号 //中国移动
-        -> return MNC.CMCC
-        3 -> return MNC.CTCC
+        -> return TrackerMNC.CMCC
+        3 -> return TrackerMNC.CTCC
         11//在电信4g的情况下返回46011
-        -> return MNC.CTCC
+        -> return TrackerMNC.CTCC
       }
     } catch (e: Exception) {
       e.printStackTrace()
     }
 
   }
-  return MNC.OTHER
+  return TrackerMNC.OTHER
 }
 
 /**
@@ -145,15 +145,15 @@ private fun Context.getMNC(): MNC {
  *
  * @return [NetType]
  */
-internal fun Context.getNetworkType(): NetworkType {
+internal fun Context.getNetworkType(): TrackerNetworkType {
   if (ContextCompat.checkSelfPermission(this,
       Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
     if (isWiFi()) {
-      return NetworkType.WIFI
+      return TrackerNetworkType.WIFI
     }
 
     if (!isNetworkAvailable()) {
-      return NetworkType.NO_NET
+      return TrackerNetworkType.NO_NET
     }
 
     //下面类型的判断不包含WIFI，如果是wifi类型会返回 UNKNOWN
@@ -161,17 +161,17 @@ internal fun Context.getNetworkType(): NetworkType {
     val networkType = telManager.networkType
     return when (networkType) {
       TelephonyManager.NETWORK_TYPE_LTE  // 4G
-        , TelephonyManager.NETWORK_TYPE_HSPAP, TelephonyManager.NETWORK_TYPE_EHRPD -> NetworkType.G4
+        , TelephonyManager.NETWORK_TYPE_HSPAP, TelephonyManager.NETWORK_TYPE_EHRPD -> TrackerNetworkType.G4
       TelephonyManager.NETWORK_TYPE_UMTS // 3G
         , TelephonyManager.NETWORK_TYPE_CDMA, TelephonyManager.NETWORK_TYPE_EVDO_0, TelephonyManager.NETWORK_TYPE_EVDO_A, TelephonyManager.NETWORK_TYPE_EVDO_B, 17//隐藏API
-      -> NetworkType.G3
+      -> TrackerNetworkType.G3
       TelephonyManager.NETWORK_TYPE_GPRS // 2G
-        , TelephonyManager.NETWORK_TYPE_EDGE, 16 -> NetworkType.G2
-      TelephonyManager.NETWORK_TYPE_UNKNOWN -> NetworkType.UNKNOWN
-      else -> NetworkType.NO_DEAL
+        , TelephonyManager.NETWORK_TYPE_EDGE, 16 -> TrackerNetworkType.G2
+      TelephonyManager.NETWORK_TYPE_UNKNOWN -> TrackerNetworkType.UNKNOWN
+      else -> TrackerNetworkType.NO_DEAL
     }
   } else {
-    return NetworkType.UNKNOWN
+    return TrackerNetworkType.UNKNOWN
   }
 }
 

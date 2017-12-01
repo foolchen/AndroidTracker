@@ -12,7 +12,7 @@ import android.content.Context
  * 2017/11/28
  * 下午8:43
  */
-interface TrackContext {
+interface TrackerContext {
   fun getApplicationContext(): Context
   fun registerActivityLifecycleCallbacks(callbacks: Application.ActivityLifecycleCallbacks)
 }

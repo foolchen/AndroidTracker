@@ -2,7 +2,7 @@ package com.foolchen.lib.tracker.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.foolchen.lib.tracker.lifecycle.IFragments
+import com.foolchen.lib.tracker.lifecycle.ITrackerIgnore
 
 /**
  * 用于显示Fragment的Activity，本身不应该被统计
@@ -10,7 +10,7 @@ import com.foolchen.lib.tracker.lifecycle.IFragments
  * 2017/11/4
  * 下午5:00
  */
-class FragmentContainerActivity : AppCompatActivity(), IFragments {
+class FragmentContainerActivity : AppCompatActivity(), ITrackerIgnore {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -22,5 +22,5 @@ class FragmentContainerActivity : AppCompatActivity(), IFragments {
         .commit()
   }
 
-  override fun hasChildFragments() = true
+  override fun isIgnored() = true
 }

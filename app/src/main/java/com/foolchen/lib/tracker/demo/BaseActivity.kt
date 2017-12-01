@@ -1,8 +1,8 @@
 package com.foolchen.lib.tracker.demo
 
 import android.support.v7.app.AppCompatActivity
-import com.foolchen.lib.tracker.lifecycle.IFragments
-import com.foolchen.lib.tracker.lifecycle.ITrack
+import com.foolchen.lib.tracker.lifecycle.ITrackerIgnore
+import com.foolchen.lib.tracker.lifecycle.ITrackerHelper
 
 /**
  *  Activity的基类
@@ -10,7 +10,7 @@ import com.foolchen.lib.tracker.lifecycle.ITrack
  * 2017/11/23
  * 下午3:18
  */
-open class BaseActivity : AppCompatActivity(), ITrack, IFragments {
+open class BaseActivity : AppCompatActivity(), ITrackerHelper, ITrackerIgnore {
   ///////////////////////////////////////////////////////////////////////////
   // 该类实现ITrack接口，此处两个方法全部返回null
   // 则页面名称（别名）会直接取使用canonicalName来当做标题
@@ -26,5 +26,5 @@ open class BaseActivity : AppCompatActivity(), ITrack, IFragments {
   // 如果返回值为false，则表明当前Activity中不包含Fragment，则此时会对Activity进行统计
   // 此处默认不包含Fragment，如有需要应该在子类中覆写该方法并修改返回值
   ///////////////////////////////////////////////////////////////////////////
-  override fun hasChildFragments(): Boolean = false
+  override fun isIgnored(): Boolean = false
 }

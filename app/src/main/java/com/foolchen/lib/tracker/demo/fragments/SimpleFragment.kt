@@ -75,5 +75,5 @@ class SimpleFragment : BaseFragment() {
     return super.onOptionsItemSelected(item)
   }
 
-  override fun hasChildFragments(): Boolean = isChildrenEnable
+  override fun isIgnored(): Boolean = isChildrenEnable
 }

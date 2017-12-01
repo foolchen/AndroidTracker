@@ -6,7 +6,7 @@ package com.foolchen.lib.tracker.lifecycle
  * 2017/11/4
  * 下午1:45
  */
-interface ITrack {
+interface ITrackerHelper {
   /**
    * 获取当前页面的名称
    */

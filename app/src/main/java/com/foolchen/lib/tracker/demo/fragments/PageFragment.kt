@@ -46,7 +46,7 @@ class PageFragment : BaseFragment() {
     super.onViewCreated(view, savedInstanceState)
     tv_desc.text = getString(R.string.text_vp_item_desc_mask, position)
 
-    if (hasChildFragments()) {
+    if (isIgnored()) {
       fragment_container.visibility = View.VISIBLE
       childFragmentManager.beginTransaction().replace(R.id.fragment_container,
           NestedFragment.newInstance(
@@ -56,7 +56,7 @@ class PageFragment : BaseFragment() {
     }
   }
 
-  override fun hasChildFragments(): Boolean = hasChildren
+  override fun isIgnored(): Boolean = hasChildren
 
   override fun getTrackName(): String? = tv_desc.text.toString()
 }
