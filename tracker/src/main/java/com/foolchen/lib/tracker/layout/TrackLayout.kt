@@ -40,13 +40,20 @@ class TrackLayout : FrameLayout {
       val ac = ev.action and MotionEvent.ACTION_MASK
       if (ac == MotionEvent.ACTION_DOWN) {
         val hitView = findHitView(rootView, ev.x.toInt(), ev.y.toInt())
-        hitView?.let {
+        /*hitView?.let {
           if (it is AdapterView<*>) {
             // 包装OnItemClickListener
             wrapItemClick(it, ev)
           } else {
             // 包装OnClickListener
             wrapClick(hitView, ev)
+          }
+        }*/
+        hitView.forEach {
+          if (it is AdapterView<*>) {
+            wrapItemClick(it, ev)
+          } else {
+            wrapClick(it, ev)
           }
         }
       }
@@ -70,8 +77,8 @@ class TrackLayout : FrameLayout {
    * 在递归过程中，如果发现[ViewGroup]中没有合适的[View]，则会对[ViewGroup]本身进行判断，
    * 如果[ViewGroup]本身可点击，则会将[ViewGroup]当做点击的[View]
    */
-  private fun findHitView(parent: View, x: Int, y: Int): View? {
-    var hitView: View? = null
+  private fun findHitView(parent: View, x: Int, y: Int): ArrayList<View> {
+    /*var hitView: View? = null
     if (hitAdapterView(parent, x, y)) {
       // 如果是AdapterView（ListView、GridView等），则直接返回
       // AdapterView需要设置OnItemClickListener，而不是OnClickListener
@@ -97,19 +104,40 @@ class TrackLayout : FrameLayout {
         // 如果已经没有子View/或者本身为View，并且View可点击，则认为点击的就是该View
         hitView = parent
       }
+    }*/
+
+    val hitViews = ArrayList<View>()
+    if (parent.isVisible() && parent.hitPoint(x, y)) {
+      if (parent is AdapterView<*>) {
+        hitViews.add(parent)
+      } else if (parent !is ViewGroup && parent.isClickable) {
+        hitViews.add(parent)
+      } else if (parent is ViewGroup) {
+        val childCount = parent.childCount
+        for (i in 0 until childCount) {
+          val child = parent.getChildAt(i)
+          val hitChildren = findHitView(child, x, y)
+          if (!hitChildren.isEmpty()) {
+            hitViews.addAll(hitChildren)
+          } else if (child.isVisible() && child.isClickable && child.hitPoint(x, y)) {
+            hitViews.add(child)
+          }
+        }
+      }
     }
-    return hitView
+    return hitViews
   }
 
+  private fun View.isVisible(): Boolean = this.visibility == View.VISIBLE
 
   private fun hitAdapterView(view: View, x: Int, y: Int): Boolean =
-      view is AdapterView<*> && hitPoint(view, x, y)
+      view is AdapterView<*> && view.hitPoint(x, y)
 
   /**
    * 判断一个View是否包含了对应的坐标
    */
-  private fun hitPoint(view: View, x: Int, y: Int): Boolean {
-    view.getGlobalVisibleRect(rect)
+  private fun View.hitPoint(x: Int, y: Int): Boolean {
+    this.getGlobalVisibleRect(rect)
     return rect.contains(x, y)
   }
 
