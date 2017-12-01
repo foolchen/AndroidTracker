@@ -89,7 +89,7 @@ class TrackLayout : FrameLayout {
         }
 
         // 如果查找了所有的子View，都没有找到可点击的View
-        if (hitView == null && parent.isClickable) {
+        if (hitView == null && parent.isClickable && hitPoint(parent, x, y)) {
           // 此时如果parent可点击，则认为点击的就是parent
           hitView = parent
         }
