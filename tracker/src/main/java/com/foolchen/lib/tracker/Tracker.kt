@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import com.foolchen.lib.tracker.data.*
+import com.foolchen.lib.tracker.lifecycle.ITrackerContext
 import com.foolchen.lib.tracker.lifecycle.TrackerActivityLifeCycle
 import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.initBuildInProperties
@@ -56,9 +57,9 @@ object Tracker {
 
   internal var appStartTime = 0L
 
-  internal var trackContext: TrackerContext? = null
+  internal var trackContext: ITrackerContext? = null
 
-  fun initialize(app: TrackerContext) {
+  fun initialize(app: ITrackerContext) {
     trackContext = app
     initBuildInProperties(app.getApplicationContext())
     app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())

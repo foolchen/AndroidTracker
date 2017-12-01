@@ -1,7 +1,7 @@
 package com.foolchen.lib.tracker.demo
 
 import android.app.Application
-import com.foolchen.lib.tracker.TrackerContext
+import com.foolchen.lib.tracker.lifecycle.ITrackerContext
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.TrackerMode
 
@@ -11,7 +11,7 @@ import com.foolchen.lib.tracker.data.TrackerMode
  * 2017/11/4
  * 下午12:08
  */
-class App : Application(), TrackerContext {
+class App : Application(), ITrackerContext {
   override fun onCreate() {
     super.onCreate()
     Tracker.initialize(this)
