@@ -44,11 +44,20 @@ class AdapterViewFragment : BaseFragment() {
       var view = convertView
       if (view == null) {
         view = LayoutInflater.from(parent.context).inflate(
-            android.R.layout.simple_list_item_1, parent, false)
+            R.layout.item_adapter_view, parent, false)
       }
 
-      (view as TextView).text = getItem(position)
-      return view
+      with(view?.findViewById<TextView>(R.id.tv_clickable)) {
+        this?.text = getString(R.string.text_clickable_mask, position.toString())
+        this?.setOnClickListener {
+          Toast.makeText(context, this.text, Toast.LENGTH_SHORT).show()
+        }
+      }
+
+      view?.findViewById<TextView>(R.id.tv_not_clickable)?.text = getString(
+          R.string.text_not_clickable_mask, position.toString())
+
+      return view!!
     }
 
     override fun getItem(position: Int) = items[position]
