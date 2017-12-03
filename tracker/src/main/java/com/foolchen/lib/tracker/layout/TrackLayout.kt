@@ -39,17 +39,8 @@ class TrackLayout : FrameLayout {
     if (ev != null) {
       val ac = ev.action and MotionEvent.ACTION_MASK
       if (ac == MotionEvent.ACTION_DOWN) {
-        val hitView = findHitView(rootView, ev.x.toInt(), ev.y.toInt())
-        /*hitView?.let {
-          if (it is AdapterView<*>) {
-            // 包装OnItemClickListener
-            wrapItemClick(it, ev)
-          } else {
-            // 包装OnClickListener
-            wrapClick(hitView, ev)
-          }
-        }*/
-        hitView.forEach {
+        val hitViews = findHitView(rootView, ev.x.toInt(), ev.y.toInt())
+        hitViews.forEach {
           if (it is AdapterView<*>) {
             wrapItemClick(it, ev)
           } else {
@@ -78,7 +69,6 @@ class TrackLayout : FrameLayout {
    * 如果[ViewGroup]本身可点击，则会将[ViewGroup]当做点击的[View]
    */
   private fun findHitView(parent: View, x: Int, y: Int): ArrayList<View> {
-    // TODO 此处可以尝试查找不被覆盖的View，如果View被覆盖，则继续查找下一个
     /*var hitView: View? = null
     if (hitAdapterView(parent, x, y)) {
       // 如果是AdapterView（ListView、GridView等），则直接返回
@@ -109,30 +99,42 @@ class TrackLayout : FrameLayout {
 
     val hitViews = ArrayList<View>()
     if (parent.isVisible() && parent.hitPoint(x, y)) {
+      // 仅在parent可见，并且命中了点击位置时才对该parent进行判断/递归查找，减少查找的次数，提高效率
       if (parent is AdapterView<*>) {
         hitViews.add(parent)
-      } else if (parent !is ViewGroup && parent.isClickable) {
-        hitViews.add(parent)
+        // 由于在AdapterView中可能会有局部的View可点击的情况，故此处需要对AdapterView中的子View进行递归查询
+        // 如果子View可点击，则只会触发子View的点击，而不会触发AdapterView的点击
+        findHitViewsInGroup(parent, x, y, hitViews)
       } else if (parent is ViewGroup) {
-        val childCount = parent.childCount
-        for (i in 0 until childCount) {
-          val child = parent.getChildAt(i)
-          val hitChildren = findHitView(child, x, y)
-          if (!hitChildren.isEmpty()) {
-            hitViews.addAll(hitChildren)
-          } else if (child.isVisible() && child.isClickable && child.hitPoint(x, y)) {
-            hitViews.add(child)
-          }
-        }
+        // 如果是ViewGroup，则去对其子View进行查询
+        findHitViewsInGroup(parent, x, y, hitViews)
+      } else if (parent !is ViewGroup && parent.isClickable) {
+        // 如果parent本身不是ViewGroup，且可点击，则当做可触发点击事件的View返回
+        hitViews.add(parent)
       }
     }
     return hitViews
   }
 
-  private fun View.isVisible(): Boolean = this.visibility == View.VISIBLE
+  /**
+   * 对ViewGroup中的所有子View进行查询，如果子View中没有符合条件的View
+   * 则会对父View进行检查，如果父View可点击，则List中会包含父View
+   */
+  private fun findHitViewsInGroup(parent: ViewGroup, x: Int, y: Int,
+      hitViews: ArrayList<View>) {
+    val childCount = parent.childCount
+    for (i in 0 until childCount) {
+      val child = parent.getChildAt(i)
+      val hitChildren = findHitView(child, x, y)
+      if (!hitChildren.isEmpty()) {
+        hitViews.addAll(hitChildren)
+      } else if (child.isVisible() && child.isClickable && child.hitPoint(x, y)) {
+        hitViews.add(child)
+      }
+    }
+  }
 
-  private fun hitAdapterView(view: View, x: Int, y: Int): Boolean =
-      view is AdapterView<*> && view.hitPoint(x, y)
+  private fun View.isVisible(): Boolean = this.visibility == View.VISIBLE
 
   /**
    * 判断一个View是否包含了对应的坐标
@@ -166,7 +168,7 @@ class TrackLayout : FrameLayout {
             wrapper = ClickWrapper(source, ev)
             view.setTag(R.id.android_tracker_click_listener, wrapper)
           }
-          clickInfo?.let {
+          clickInfo.let {
             it.isAccessible = true
             it.set(viewInfo, wrapper)
           }
