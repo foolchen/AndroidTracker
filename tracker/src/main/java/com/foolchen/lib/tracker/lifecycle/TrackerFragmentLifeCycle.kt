@@ -63,10 +63,10 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
 
   private fun track(f: Fragment) {
     val screenName = f.getTrackName()
-    Tracker.refererAlias = Tracker.screenNameAlias
     Tracker.referer = Tracker.screenName
-    Tracker.screenNameAlias = screenName
-    Tracker.screenName = f.javaClass.canonicalName
+    Tracker.refererClass = Tracker.screenClass
+    Tracker.screenName = screenName
+    Tracker.screenClass = f.javaClass.canonicalName
     Tracker.screenTitle = f.getTrackTitle()
     var parentAlias = ""
     var parent = ""
@@ -81,8 +81,8 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
         parent = activity.javaClass.canonicalName
       }
     }
-    Tracker.parentAlias = parentAlias
-    Tracker.parent = parent
+    Tracker.parent = parentAlias
+    Tracker.parentClass = parent
     Tracker.trackScreen(f.getTrackProperties())
   }
 

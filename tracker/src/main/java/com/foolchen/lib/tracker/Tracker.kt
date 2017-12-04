@@ -26,17 +26,17 @@ object Tracker {
 
 
   /**当前正在浏览的页面的名称*/
-  internal var screenNameAlias: String = ""
   internal var screenName: String = ""
+  internal var screenClass: String = ""
   internal var screenTitle: String = ""
 
   /**当前正在浏览的页面所依附的页面*/
-  internal var parentAlias: String = ""
   internal var parent: String = ""
+  internal var parentClass: String = ""
 
   /** 上一个浏览页面的名称 */
-  internal var refererAlias: String = ""
   internal var referer: String = ""
+  internal var refererClass: String = ""
 
   /**
    * 开发者在初始化时附加的属性
@@ -174,12 +174,12 @@ object Tracker {
     trackEvent(event)
 
     clearOnBackground.let {
-      screenNameAlias = ""
       screenName = ""
-      parentAlias = ""
+      screenClass = ""
       parent = ""
-      refererAlias = ""
+      parentClass = ""
       referer = ""
+      refererClass = ""
     }
   }
 

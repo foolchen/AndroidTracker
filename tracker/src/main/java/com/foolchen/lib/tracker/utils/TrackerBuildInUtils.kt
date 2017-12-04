@@ -11,7 +11,7 @@ import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import com.foolchen.lib.tracker.BuildConfig
-import com.foolchen.lib.tracker.DISTINCT_ID
+import com.foolchen.lib.tracker.data.DISTINCT_ID
 import com.foolchen.lib.tracker.data.TrackerMNC
 import com.foolchen.lib.tracker.data.TrackerNetworkType
 
@@ -29,23 +29,23 @@ internal fun initBuildInProperties(context: Context) {
   buildInUUID = context.getUUID()
   buildInObject.put(DISTINCT_ID, buildInUUID)
 
-  buildInLib.put("\$lib", "Android")
-  buildInLib.put("\$lib_version", BuildConfig.VERSION_NAME)
-  buildInLib.put("\$app_version", context.getVersionName())
+  buildInLib.put("lib", "Android")
+  buildInLib.put("lib_version", BuildConfig.VERSION_NAME)
+  buildInLib.put("app_version", context.getVersionName())
 
-  buildInProperties.put("\$lib", "Android")
-  buildInProperties.put("\$lib_version", BuildConfig.VERSION_NAME)
-  buildInProperties.put("\$app_version", context.getVersionName())
-  buildInProperties.put("\$manufacturer", Build.BRAND)
-  buildInProperties.put("\$model", Build.MODEL)
-  buildInProperties.put("\$os", "Android")
-  buildInProperties.put("\$os_version", Build.VERSION.RELEASE)
-  buildInProperties.put("\$os_version", Build.VERSION.RELEASE)
-  buildInProperties.put("\$screen_height", context.getScreenWidth())
-  buildInProperties.put("\$screen_width", context.getScreenHeight())
-  buildInProperties.put("\$carrier", context.getMNC().desc())
-  buildInProperties.put("\$imeicode", context.getIMEI())
-  buildInProperties.put("\$device_id", context.getAndroidId())
+  buildInProperties.put("lib", "Android")
+  buildInProperties.put("lib_version", BuildConfig.VERSION_NAME)
+  buildInProperties.put("app_version", context.getVersionName())
+  buildInProperties.put("manufacturer", Build.BRAND)
+  buildInProperties.put("model", Build.MODEL)
+  buildInProperties.put("os", "Android")
+  buildInProperties.put("os_version", Build.VERSION.RELEASE)
+  buildInProperties.put("os_version", Build.VERSION.RELEASE)
+  buildInProperties.put("screen_height", context.getScreenWidth())
+  buildInProperties.put("screen_width", context.getScreenHeight())
+  buildInProperties.put("carrier", context.getMNC().desc())
+  buildInProperties.put("imeicode", context.getIMEI())
+  buildInProperties.put("device_id", context.getAndroidId())
 }
 
 internal fun login(userId: String) {

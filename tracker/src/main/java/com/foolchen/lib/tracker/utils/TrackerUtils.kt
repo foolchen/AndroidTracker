@@ -6,8 +6,8 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
-import com.foolchen.lib.tracker.ELEMENT_CONTENT
-import com.foolchen.lib.tracker.ELEMENT_TYPE
+import com.foolchen.lib.tracker.data.ELEMENT_CONTENT
+import com.foolchen.lib.tracker.data.ELEMENT_TYPE
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.TrackerEvent
 import com.foolchen.lib.tracker.data.TrackerMode

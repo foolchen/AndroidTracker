@@ -81,13 +81,13 @@ class TrackerActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   private fun track(activity: Activity) {
-    Tracker.refererAlias = Tracker.screenNameAlias
     Tracker.referer = Tracker.screenName
-    Tracker.screenNameAlias = activity.getTrackName()
-    Tracker.screenName = activity.javaClass.canonicalName
+    Tracker.refererClass = Tracker.screenClass
+    Tracker.screenName = activity.getTrackName()
+    Tracker.screenClass = activity.javaClass.canonicalName
     Tracker.screenTitle = activity.getTrackTitle()
-    Tracker.parentAlias = ""
     Tracker.parent = ""
+    Tracker.parentClass = ""
     Tracker.trackScreen(activity.getTrackProperties())
   }
 }

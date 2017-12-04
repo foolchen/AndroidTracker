@@ -1,12 +1,12 @@
 package com.foolchen.lib.tracker.data
 
 import com.foolchen.lib.tracker.*
+import com.foolchen.lib.tracker.Tracker.parentClass
 import com.foolchen.lib.tracker.Tracker.parent
-import com.foolchen.lib.tracker.Tracker.parentAlias
+import com.foolchen.lib.tracker.Tracker.refererClass
 import com.foolchen.lib.tracker.Tracker.referer
-import com.foolchen.lib.tracker.Tracker.refererAlias
+import com.foolchen.lib.tracker.Tracker.screenClass
 import com.foolchen.lib.tracker.Tracker.screenName
-import com.foolchen.lib.tracker.Tracker.screenNameAlias
 import com.foolchen.lib.tracker.Tracker.screenTitle
 import com.foolchen.lib.tracker.utils.*
 
@@ -46,13 +46,13 @@ open class TrackerEvent(
     o.put(LIB, buildInLib)
     val properties = HashMap<String, Any>()
     properties.putAll(buildInProperties)
-    properties.put(SCREEN_NAME_ALIAS, screenNameAlias)
     properties.put(SCREEN_NAME, screenName)
+    properties.put(SCREEN_CLASS, screenClass)
     properties.put(TITLE, screenTitle)
-    properties.put(REFERER_ALIAS, refererAlias)
     properties.put(REFERER, referer)
-    properties.put(PARENT_ALIAS, parentAlias)
+    properties.put(REFERER_CLASS, refererClass)
     properties.put(PARENT, parent)
+    properties.put(PARENT_CLASS, parentClass)
     Tracker.trackContext?.let {
       properties.put(NETWORK_TYPE,
           it.getApplicationContext().getNetworkType().desc())
