@@ -6,12 +6,13 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
+import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.ELEMENT_CONTENT
 import com.foolchen.lib.tracker.data.ELEMENT_TYPE
-import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.TrackerEvent
 import com.foolchen.lib.tracker.data.TrackerMode
 import com.foolchen.lib.tracker.lifecycle.ITrackerHelper
+import com.foolchen.lib.tracker.service.TrackerService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
@@ -114,8 +115,7 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
 }
 
 internal fun trackEvent(event: TrackerEvent) {
-  //TODO 此处进行数据的处理
-
+  TrackerService.report(event.toJson())
   // 打印日志
   log(event)
 }
@@ -123,9 +123,9 @@ internal fun trackEvent(event: TrackerEvent) {
 
 internal fun log(event: TrackerEvent) {
   if (Tracker.mode == TrackerMode.DEBUG_ONLY) {
-    log(event.toJson())
+    log(event.toPrettyJson())
   } else if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
-    log(event.toJson())
+    log(event.toPrettyJson())
   }
 }
 

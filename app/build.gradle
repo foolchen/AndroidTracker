@@ -12,6 +12,17 @@ android {
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    // 用于读取本地的配置信息
+    Properties properties = new Properties()
+    InputStream is = project.rootProject.file('local.properties').newDataInputStream()
+    properties.load(is)
+    buildConfigField "String", "SERVICE_HOST",
+        String.format('\"%1$s\"', properties.getProperty('SERVICE_HOST'))
+    buildConfigField "String", "SERVICE_PATH",
+        String.format('\"%1$s\"', properties.getProperty('SERVICE_PATH'))
+    buildConfigField "String", "PROJECT_NAME",
+        String.format('\"%1$s\"', properties.getProperty('PROJECT_NAME'))
   }
   buildTypes {
     release {

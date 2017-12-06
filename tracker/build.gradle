@@ -8,7 +8,6 @@ android {
     minSdkVersion rootProject.ext.min_sdk_version
     targetSdkVersion rootProject.ext.target_sdk_version
     versionName VERSION_NAME
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
@@ -21,25 +20,26 @@ android {
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
-
   implementation "com.android.support:appcompat-v7:$support_library_version"
   implementation "com.android.support:support-fragment:$support_library_version"
   implementation "com.android.support:support-annotations:$support_library_version"
   implementation "com.google.code.gson:gson:$gson_version"
-  testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:0.5'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+  implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+  implementation("com.squareup.retrofit2:converter-gson:$retrofit_version") {
+    exclude group: 'com.squareup.okhttp3'
+    exclude group: 'com.google.code.gson'
+  }
+  implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofit_version") {
+    exclude group: 'com.squareup.okhttp3'
+  }
+  implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
+  implementation("io.reactivex.rxjava2:rxandroid:$rx_android_version") {
+    exclude module: 'rxjava'
+  }
+  implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version") {
+    exclude group: 'com.android.support'
+    exclude group: 'com.squareup.okhttp3'
+  }
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
-
-/*// type显示指定任务类型或任务, 这里指定要执行Javadoc这个task,这个task在gradle中已经定义
-task androidJavadocs(type: Javadoc) {
-  // 设置源码所在的位置
-  source = android.sourceSets.main.java.sourceFiles
-}
-
-// 生成sources.jar
-task androidSourcesJar(type: Jar) {
-  classifier = 'sources'
-  from android.sourceSets.main.java.sourceFiles
-}*/

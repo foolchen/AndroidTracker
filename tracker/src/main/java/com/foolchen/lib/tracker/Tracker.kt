@@ -59,10 +59,43 @@ object Tracker {
 
   internal var trackContext: ITrackerContext? = null
 
+  internal var serviceHost: String? = null
+  internal var servicePath: String? = null
+  internal var projectName: String? = null
+  /**
+   * 上报接口的默认超时时间为3000ms
+   */
+  internal var timeoutDuration = 3000L
+
+  private var isInitialized = false
+
+  /**
+   * 对AndroidTracker进行初始化
+   *
+   * 如果未调用该方法进行初始化，使用过程中可能会出现无法统计、Crash等情况
+   */
   fun initialize(app: ITrackerContext) {
     trackContext = app
     initBuildInProperties(app.getApplicationContext())
     app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())
+    isInitialized = true
+  }
+
+  /**
+   * 设置接口地址
+   *
+   * AndroidTracker中的数据上报使用了Retrofit，此处需要对host和path进行分别设置
+   */
+  fun setService(host: String, path: String) {
+    this.serviceHost = host
+    this.servicePath = path
+  }
+
+  /**
+   * 设置项目名称
+   */
+  fun setProjectName(projectName: String) {
+    this.projectName = projectName
   }
 
   /**
@@ -167,12 +200,13 @@ object Tracker {
    */
   internal fun onBackground() {
     isBackground = true
-    val event = TrackerEvent(APP_END)
-    val properties = HashMap<String, Any>()
-    properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
-    event.addProperties(properties)
-    trackEvent(event)
-
+    if (isInitialized) {
+      val event = TrackerEvent(APP_END)
+      val properties = HashMap<String, Any>()
+      properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
+      event.addProperties(properties)
+      trackEvent(event)
+    }
     clearOnBackground.let {
       screenName = ""
       screenClass = ""
@@ -185,12 +219,14 @@ object Tracker {
 
   internal fun onForeground() {
     appStartTime = System.currentTimeMillis()
-
-    val event = TrackerEvent(APP_START)
-    val properties = HashMap<String, Any>()
-    properties.put(RESUME_FROM_BACKGROUND, isBackground)
-    event.addProperties(properties)
-    trackEvent(event)
+    if (isInitialized) {
+      val event = TrackerEvent(APP_START)
+      val properties = HashMap<String, Any>()
+      properties.put(RESUME_FROM_BACKGROUND, isBackground)
+      event.addProperties(properties)
+      trackEvent(event)
+    }
     isBackground = false
+
   }
 }
