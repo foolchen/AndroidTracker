@@ -37,7 +37,7 @@ open class TrackerEvent(
     }
   }
 
-  fun toJson(): String {
+  fun build(): Map<String, Any> {
     val o = HashMap<String, Any>()
     o.putAll(buildInObject)
     o.put(EVENT, event)
@@ -66,38 +66,14 @@ open class TrackerEvent(
     }
 
     o.put(PROPERTIES, properties)
-    return GSON.toJson(o)
+    return o
+  }
+
+  fun toJson(): String {
+    return GSON.toJson(build())
   }
 
   fun toPrettyJson(): String {
-    val o = HashMap<String, Any>()
-    o.putAll(buildInObject)
-    o.put(EVENT, event)
-    o.put(TIME, time)
-
-    o.put(LIB, buildInLib)
-    val properties = HashMap<String, Any>()
-    properties.putAll(buildInProperties)
-    properties.put(SCREEN_NAME, screenName)
-    properties.put(SCREEN_CLASS, screenClass)
-    properties.put(TITLE, screenTitle)
-    properties.put(REFERER, referer)
-    properties.put(REFERER_CLASS, refererClass)
-    properties.put(PARENT, parent)
-    properties.put(PARENT_CLASS, parentClass)
-    Tracker.trackContext?.let {
-      properties.put(NETWORK_TYPE,
-          it.getApplicationContext().getNetworkType().desc())
-      properties.put(WIFI, it.getApplicationContext().isWiFi())
-    }
-    Tracker.channelId?.let {
-      properties.put(CHANNEL, it)
-    }
-    this@TrackerEvent.properties.let {
-      properties.putAll(it)
-    }
-
-    o.put(PROPERTIES, properties)
-    return PRETTY_GSON.toJson(o)
+    return PRETTY_GSON.toJson(build())
   }
 }

@@ -171,7 +171,6 @@ object Tracker {
     event.addProperties(properties)
     trackEvent(event)
 
-    // TODO: 2017/11/4 chenchong 用于暂存或者请求接口
   }
 
   /**

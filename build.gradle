@@ -2,6 +2,7 @@
 
 buildscript {
   ext.kotlin_version = '1.2.0'
+  ext.anko_version = '0.10.3'
 
   ext.min_sdk_version = 16
   ext.target_sdk_version = 25
@@ -14,7 +15,7 @@ buildscript {
   ext.okhttp_version = '3.9.1'
   ext.retrofit_version = '2.3.0'
   ext.rx_java_version = '2.1.5'
-  ext.rx_android_version='2.0.1'
+  ext.rx_android_version = '2.0.1'
 
   repositories {
     google()

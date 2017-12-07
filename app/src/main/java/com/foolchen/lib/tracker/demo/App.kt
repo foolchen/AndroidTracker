@@ -19,6 +19,6 @@ class App : Application(), ITrackerContext {
     Tracker.addProperty("附加的属性2", "附加的属性2")
     Tracker.setService(BuildConfig.SERVICE_HOST, BuildConfig.SERVICE_PATH)
     Tracker.setProjectName(BuildConfig.PROJECT_NAME)
-    Tracker.setMode(TrackerMode.DEBUG_ONLY)
+    Tracker.setMode(TrackerMode.RELEASE)
   }
 }

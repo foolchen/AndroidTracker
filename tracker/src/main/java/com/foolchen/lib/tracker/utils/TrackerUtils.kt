@@ -115,7 +115,16 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
 }
 
 internal fun trackEvent(event: TrackerEvent) {
-  TrackerService.report(event.toJson())
+  /*if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
+    // 在调试并且数据入库的模式下，直接请求接口
+    TrackerService.report(event.toJson())
+  } else if (Tracker.mode == TrackerMode.RELEASE) {
+    // 发布模式下，需要对数据做本地缓存处理
+
+  }*/
+  // 此处尝试对数据进行上报
+  // 具体的上报策略由TrackerService掌控
+  TrackerService.report(event)
   // 打印日志
   log(event)
 }
