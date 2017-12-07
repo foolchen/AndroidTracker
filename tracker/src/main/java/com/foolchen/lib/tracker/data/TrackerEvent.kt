@@ -20,7 +20,7 @@ open class TrackerEvent(
     @EventType private val event: String) {
 
   private val properties = HashMap<String, Any>()
-  private val time = System.currentTimeMillis()
+  internal val time = System.currentTimeMillis()
 
   init {
     Tracker.additionalProperties.filter { it.value != null }.forEach {
