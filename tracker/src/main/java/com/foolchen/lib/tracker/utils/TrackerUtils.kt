@@ -114,21 +114,21 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   return properties
 }
 
-internal fun trackEvent(event: TrackerEvent) {
-  /*if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
-    // 在调试并且数据入库的模式下，直接请求接口
-    TrackerService.report(event.toJson())
-  } else if (Tracker.mode == TrackerMode.RELEASE) {
-    // 发布模式下，需要对数据做本地缓存处理
-
-  }*/
+/**
+ * 对事件进行统计
+ *
+ * @param event 要统计的事件
+ * @param background 当前事件是否为切换到后台
+ * @param foreground 当前事件是否为切换到前台
+ */
+internal fun trackEvent(event: TrackerEvent, background: Boolean = false,
+    foreground: Boolean = false) {
   // 此处尝试对数据进行上报
   // 具体的上报策略由TrackerService掌控
-  TrackerService.report(event)
+  TrackerService.report(event, background, foreground)
   // 打印日志
   log(event)
 }
-
 
 internal fun log(event: TrackerEvent) {
   if (Tracker.mode == TrackerMode.DEBUG_ONLY) {

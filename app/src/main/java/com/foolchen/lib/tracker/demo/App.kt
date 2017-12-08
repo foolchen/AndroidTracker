@@ -1,6 +1,7 @@
 package com.foolchen.lib.tracker.demo
 
 import android.app.Application
+import com.amitshekhar.DebugDB
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.TrackerMode
 import com.foolchen.lib.tracker.lifecycle.ITrackerContext
@@ -20,5 +21,7 @@ class App : Application(), ITrackerContext {
     Tracker.setService(BuildConfig.SERVICE_HOST, BuildConfig.SERVICE_PATH)
     Tracker.setProjectName(BuildConfig.PROJECT_NAME)
     Tracker.setMode(TrackerMode.RELEASE)
+
+    DebugDB.getAddressLog()
   }
 }

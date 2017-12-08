@@ -6,9 +6,7 @@ import android.widget.AdapterView
 import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ITrackerContext
 import com.foolchen.lib.tracker.lifecycle.TrackerActivityLifeCycle
-import com.foolchen.lib.tracker.utils.getTrackProperties
-import com.foolchen.lib.tracker.utils.initBuildInProperties
-import com.foolchen.lib.tracker.utils.trackEvent
+import com.foolchen.lib.tracker.utils.*
 import java.util.*
 import kotlin.collections.HashMap
 import com.foolchen.lib.tracker.utils.login as buildInLogin
@@ -204,7 +202,7 @@ object Tracker {
       val properties = HashMap<String, Any>()
       properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
       event.addProperties(properties)
-      trackEvent(event)
+      trackEvent(event, background = true)
     }
     clearOnBackground.let {
       screenName = ""
@@ -223,9 +221,8 @@ object Tracker {
       val properties = HashMap<String, Any>()
       properties.put(RESUME_FROM_BACKGROUND, isBackground)
       event.addProperties(properties)
-      trackEvent(event)
+      trackEvent(event, foreground = true)
     }
     isBackground = false
-
   }
 }

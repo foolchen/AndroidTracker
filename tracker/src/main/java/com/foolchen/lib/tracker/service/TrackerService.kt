@@ -4,15 +4,21 @@ import android.util.Log
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.data.TrackerEvent
 import com.foolchen.lib.tracker.data.TrackerMode
+import com.foolchen.lib.tracker.db.EventContract
+import com.foolchen.lib.tracker.db.database
 import com.foolchen.lib.tracker.utils.GSON
+import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
+import org.jetbrains.anko.db.*
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KFunction0
 
 /**
  * 用于网络请求
@@ -29,42 +35,27 @@ object TrackerService {
   private val mEvents = ArrayList<TrackerEvent>()
 
   /**
-   * 上报数据
+   * 尝试上报数据
    *
-   * @param data 要上报的JSON数据
+   * @param event 本次要统计的事件
+   * @param background 本次事件是否为切换到后台
+   * @param foreground 本次事件是否为切换到前台
    */
-  fun report(event: TrackerEvent) {
+  fun report(event: TrackerEvent, background: Boolean = false, foreground: Boolean = false) {
     if (Tracker.mode == TrackerMode.RELEASE) {
       // 如果为release模式，则此处需要考虑同步、批量上传等处理
       // 首先将事件添加到事件列表中
       mEvents.add(event)
       // 然后判断事件数量是否达到了上传的阈值
-      if (mEvents.size >= threshold()) {
+      if (mEvents.size >= threshold() || background || foreground) {
         // 如果达到了阈值，则进行后续操作
-        val reportEvents = prepareReportEvents()// 准备要上报的事件
-        mService.report(Tracker.servicePath!!, Tracker.projectName!!,
-            prepareReportJson(reportEvents), mode()).subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe(object : IgnoreObserver() {
-              override fun onNext(t: Response<String>) {
-                super.onNext(t)
-                if (t.code() == 200) {
-                  // 接口请求成功
-                  // 则此时不做任何处理
-                } else {
-                  // 接口请求失败
-                  // 则此时将上报失败的事件添加回待上报的事件列表中
-                  addEvents(reportEvents)
-                }
-              }
-
-              override fun onError(e: Throwable) {
-                super.onError(e)
-                // 接口请求失败
-                // 则此时将上报失败的事件添加回待上报的事件列表中
-                addEvents(reportEvents)
-              }
-            })
+        val reportEvents = prepareEvents()// 准备要上报的事件
+        report(reportEvents,
+            // 在从后台切换到前台时，将反序列化方法当做实参传入，用于将数据库中的事件读取出来
+            if (foreground) this@TrackerService::deserializeEvents else null,
+            // 如果当前要统计的事件为切换到后台，则将序列化方法当做实参传递，用于在上报失败后将数据存储到数据库
+            // 否则，将恢复事件方法当做实参传递，在上报失败后，将数据再次添加到候选列表中
+            if (background) this@TrackerService::serializeEvents else this@TrackerService::addEvents)
       }
     } else if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
       // 如果为debug&track模式，则直接上传数据，并且不关注失败
@@ -73,6 +64,48 @@ object TrackerService {
           mode()).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(
           IgnoreObserver())
     }
+  }
+
+  private fun report(events: List<TrackerEvent>, deserializeFunc: KFunction0<List<TrackerEvent>>?,
+      failureFunc: (List<TrackerEvent>) -> Unit) {
+    Observable
+        .create<List<TrackerEvent>> {
+          // 如果传入的反序列化方法不为空，则将反序列化的数据传递到下一步
+          // 否则，则传递一个空的List
+          it.onNext(deserializeFunc?.invoke() ?: Collections.emptyList<TrackerEvent>())
+          it.onComplete()
+        }
+        .map {
+          // 此处，在反序列化数据不为空的情况下，将反序列化数据添加到要上报的数据中
+          (events as MutableList<TrackerEvent>).addAll(it) // 由于已知此处肯定为ArrayList，故直接进行转换
+          events
+        }
+        .flatMap {
+          mService.report(Tracker.servicePath!!, Tracker.projectName!!,
+              prepareReportJson(it), mode())
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .subscribe(object : IgnoreObserver() {
+          override fun onNext(t: Response<String>) {
+            super.onNext(t)
+            if (t.code() == 200) {
+              // 接口请求成功
+              // 则此时不做任何处理
+            } else {
+              // 接口请求失败
+              // 则此时将上报失败的事件添加回待上报的事件列表中
+              failureFunc.invoke(events)
+            }
+          }
+
+          override fun onError(e: Throwable) {
+            super.onError(e)
+            // 接口请求失败
+            // 则此时将上报失败的事件添加回待上报的事件列表中
+            failureFunc.invoke(events)
+          }
+        })
   }
 
   /** 根据枚举类型来计算上报接口时使用的模式 */
@@ -101,7 +134,7 @@ object TrackerService {
    * 该方法会将要上传的事件从事件列表中暂时移除，并生成一个新的事件列表用于上报。该操作为同步操作，防止发生错误
    */
   @Synchronized
-  private fun prepareReportEvents(): List<TrackerEvent> {
+  private fun prepareEvents(): List<TrackerEvent> {
     val reportEvents = ArrayList<TrackerEvent>(mEvents)
     mEvents.removeAll(reportEvents)
     return reportEvents
@@ -123,6 +156,42 @@ object TrackerService {
     return GSON.toJson(array)
   }
 
+  /** 对事件列表进行持久化 */
+  private fun serializeEvents(events: List<TrackerEvent>) {
+    Tracker.trackContext?.getApplicationContext()?.let {
+      it.database.use {
+        transaction {
+          events.forEach {
+            insert(EventContract.TABLE_NAME, EventContract.DATA to GSON.toJson(it),
+                EventContract.TIME to it.time)
+          }
+        }
+      }
+    }
+  }
+
+  /** 对事件列表进行反持久化 */
+  private fun deserializeEvents(): List<TrackerEvent> {
+    val events = ArrayList<TrackerEvent>()
+    Tracker.trackContext?.getApplicationContext()?.database?.use {
+      // 查找出所有的数据
+      select(EventContract.TABLE_NAME, EventContract.DATA).orderBy(EventContract.TIME,
+          SqlOrderDirection.ASC)
+          .exec {
+            val deserializeEvents = parseList(object : RowParser<TrackerEvent> {
+              override fun parseRow(columns: Array<Any?>): TrackerEvent {
+                val data = columns[0] as String
+                return GSON.fromJson(data, TrackerEvent::class.java)
+              }
+            })
+            events.addAll(deserializeEvents)
+          }
+      // 然后将所有的数据从数据库中删除
+      delete(EventContract.TABLE_NAME)
+    }
+    return events
+  }
+
   private var mRetrofit: Retrofit? = null
 
   private fun createRetrofit(): Retrofit {
@@ -140,10 +209,7 @@ object TrackerService {
         val builder = Retrofit.Builder()
         builder.baseUrl(Tracker.serviceHost!!)
         builder.client(createOkHttpClient())
-        /*val gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT,
-            Modifier.STATIC)
-            .create()*/
-        mRetrofit = builder/*.addConverterFactory(GsonConverterFactory.create(gson))*/
+        mRetrofit = builder
             .addConverterFactory(ToStringConverterFactory())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

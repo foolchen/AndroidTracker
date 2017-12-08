@@ -9,6 +9,7 @@ import com.foolchen.lib.tracker.Tracker.screenClass
 import com.foolchen.lib.tracker.Tracker.screenName
 import com.foolchen.lib.tracker.Tracker.screenTitle
 import com.foolchen.lib.tracker.utils.*
+import com.google.gson.annotations.SerializedName
 
 /**
  * 统计事件
@@ -16,11 +17,14 @@ import com.foolchen.lib.tracker.utils.*
  * 2017/11/4
  * 下午2:48
  */
-open class TrackerEvent(
-    @EventType private val event: String) {
+data class TrackerEvent(
+    @SerializedName("event")
+    @EventType private var event: String) {
 
-  private val properties = HashMap<String, Any>()
-  internal val time = System.currentTimeMillis()
+  @SerializedName("properties")
+  private var properties = HashMap<String, Any>()
+  @SerializedName("time")
+  internal var time = System.currentTimeMillis()
 
   init {
     Tracker.additionalProperties.filter { it.value != null }.forEach {
@@ -67,10 +71,6 @@ open class TrackerEvent(
 
     o.put(PROPERTIES, properties)
     return o
-  }
-
-  fun toJson(): String {
-    return GSON.toJson(build())
   }
 
   fun toPrettyJson(): String {

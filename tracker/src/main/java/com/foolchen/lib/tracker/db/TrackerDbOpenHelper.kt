@@ -2,7 +2,6 @@ package com.foolchen.lib.tracker.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.foolchen.lib.tracker.Tracker
 import org.jetbrains.anko.db.*
 
 /**
@@ -26,16 +25,17 @@ class TrackerDbOpenHelper(context: Context) : ManagedSQLiteOpenHelper(context, "
     }
   }
 
-  override fun onCreate(db: SQLiteDatabase) {
-    db.createTable("data", true,
-        "_id" to INTEGER + PRIMARY_KEY + UNIQUE + AUTOINCREMENT,
-        "data" to TEXT,
-        "time" to INTEGER)
+  override fun onCreate(db: SQLiteDatabase?) {
+    db?.createTable(EventContract.TABLE_NAME, true,
+        EventContract.ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+        EventContract.DATA to TEXT,
+        EventContract.TIME to INTEGER)
   }
 
   override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+    // 此处对表结构进行更新
   }
 }
 
 internal val Context.database: TrackerDbOpenHelper
-  get() = TrackerDbOpenHelper.getInstance(Tracker.trackContext!!.getApplicationContext())
+  get() = TrackerDbOpenHelper.getInstance(this)
