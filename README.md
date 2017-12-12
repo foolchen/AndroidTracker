@@ -141,6 +141,62 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
     }
 ```
 
+## 登入/登出处理
+
+每个用户会使用`distinct_id`来标识，用户未登录时，该值由设备`Android Id`、设备制造商、设备型号等字段计算得到唯一值。
+而在用户登录后，则需要使用确切的用户id来替代该值。示例如下：
+kotlin:
+
+```kotlin
+Tracker.login("此处设置用户id")
+```
+
+java:
+
+```java
+Tracker.INSTANCE.login("此处设置用户id");
+```
+
+在用户退出登录时，需要主动调用登出方法。此时，`distinct_id`的值会替换为SDK生成的值。示例如下：
+
+kotlin：
+
+```kotlin
+Tracker.logout()
+```
+
+java：
+
+```java
+Tracker.INSTANCE.logout();
+```
+
+## 设置渠道号
+
+渠道号在统计事件中的属性为`channel`。设置如下：
+
+kotlin：
+
+```kotlin
+Tracker.setChannelId("此处设置渠道号")
+```
+
+java：
+
+```java
+Tracker.INSTANCE.setChannelId("此处设置渠道号");
+```
+
+
+## 针对所有统计附加属性
+
+如果想要针对所有的统计事件增加一些固定的属性，则应该在初始化时设置如下：
+
+```kotlin
+Tracker.addProperty("附加的属性1", "附加的属性1")
+Tracker.addProperty("附加的属性2", "附加的属性2")
+```
+
 
 ## 上报模式
 
