@@ -45,7 +45,7 @@ class App : Application(), ITrackerContext {
 }
 ```
 
-### TrackerMode
+### 上报模式
 
 **DEBUG_ONLY**：仅在`Logcat`中打印日志，不上传数据。建议仅在调试阶段使用该模式。
 
