@@ -176,6 +176,10 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
 }
 ```
 
+### 注意事项
+
+由于对点击事件的统计使用到了反射，故集成了该库之后会对点击时的效率有所影响。
+
 
 ### License
 
