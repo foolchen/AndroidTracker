@@ -45,6 +45,86 @@ class App : Application(), ITrackerContext {
 }
 ```
 
+### Activity中的集成方式
+
+在`Activity`中集成时，如果项目仅存在`Activity`，不需要对`Fragment`进行特殊处理，则仅需要实现`ITrackerHelper`接口，用于获取页面的名称和页面附加属性。
+如果项目中有`Fragment`，需要在特定情况下忽略`Activity`的统计，则还应该实现`ITrackerIgnore`接口，手动处理`isIgnore`方法的返回值。示例如下：
+
+```kotlin
+open class BaseActivity : AppCompatActivity(), ITrackerHelper, ITrackerIgnore {
+  ///////////////////////////////////////////////////////////////////////////
+  // 该类实现ITrackerHelper接口，此处两个方法全部返回null
+  // 则页面名称（别名）会直接取使用canonicalName来当做标题
+  // 并且不会有附加的属性
+  ///////////////////////////////////////////////////////////////////////////
+  override fun getTrackName(): String? = null
+
+  override fun getTrackProperties(): Map<String, Any?>? = null
+
+  ///////////////////////////////////////////////////////////////////////////
+  // ITrackerIgnore接口用于确定当前Activity中是否包含Fragment
+  // 如果返回值为true，则表明当前Activity中有包含Fragment，则此时不会对Activity进行统计
+  // 如果返回值为false，则表明当前Activity中不包含Fragment，则此时会对Activity进行统计
+  // 此处默认不包含Fragment，如有需要应该在子类中覆写该方法并修改返回值
+  ///////////////////////////////////////////////////////////////////////////
+  override fun isIgnored(): Boolean = false
+}
+```
+
+### Fragment中的集成方式
+
+与`Activity`相同，如果`Fragment`中不再有子`Fragment`，则仅需要实现`ITrackerHelper`、`IFragmentVisibleHelper`接口。
+如果有子`Fragment`，或者需要手动忽略部分`Fragment`的统计，则需要实现`ITrackerIgnore`接口。示例如下：
+
+```kotlin
+open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentVisibleHelper {
+  private var mIFragmentVisible: ITrackerFragmentVisible? = null
+
+  override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+    super.setUserVisibleHint(isVisibleToUser)
+    mIFragmentVisible?.onFragmentVisibilityChanged(isVisibleToUser, this)
+  }
+
+  override fun onHiddenChanged(hidden: Boolean) {
+    super.onHiddenChanged(hidden)
+    mIFragmentVisible?.onFragmentVisibilityChanged(!hidden, this)
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // 该类实现ITrackerHelper接口，此处两个方法全部返回null
+  // 则页面名称（别名）会直接取使用canonicalName来当做标题
+  // 并且不会有附加的属性
+  ///////////////////////////////////////////////////////////////////////////
+  override fun getTrackName(): String? = null
+
+  override fun getTrackProperties(): Map<String, Any?>? = null
+
+  ///////////////////////////////////////////////////////////////////////////
+  // ITrackerIgnore接口用于确定当前Fragment中是否包含子Fragment
+  // 如果返回值为true，则表明当前Fragment中有包含子Fragment，则此时不会对当前Fragment进行统计
+  // 如果返回值为false，则表明当前Fragment中不包含子Fragment，则此时会对当前Fragment进行统计
+  // 此处默认不包含子Fragment，如有需要应该在子类中覆写该方法并修改返回值
+  ///////////////////////////////////////////////////////////////////////////
+  override fun isIgnored(): Boolean = false
+
+  ///////////////////////////////////////////////////////////////////////////
+  // IFragmentVisibleHelper接口需要被Fragment实现，该接口用于想Fragment中传递一个
+  // IFragmentVisible接口而IFragmentVisible需要在当前Fragment的setUserVisibleHint
+  // 和onHiddenChanged()方法被调用时同步调用以便于正确处理内部的子Fragment
+  ///////////////////////////////////////////////////////////////////////////
+  override fun registerIFragmentVisible(it: ITrackerFragmentVisible) {
+    mIFragmentVisible = it
+  }
+
+  override fun unregisterIFragmentVisible(it: ITrackerFragmentVisible) {
+    mIFragmentVisible = null
+  }
+
+  override fun getIFragmentVisible(): ITrackerFragmentVisible? = mIFragmentVisible
+}
+```
+
+
 ### 上报模式
 
 **DEBUG_ONLY**：仅在`Logcat`中打印日志，不上传数据。建议仅在调试阶段使用该模式。

@@ -43,9 +43,9 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
   override fun isIgnored(): Boolean = false
 
   ///////////////////////////////////////////////////////////////////////////
-  // IFragmentVisibleHelper接口需要被Fragment实现，该接口用于想Fragment中传递一个IFragmentVisible接口
-  // 而IFragmentVisible需要在当前Fragment的setUserVisibleHint和onHiddenChanged()方法被调用时同步调用
-  // 以便于正确处理内部的子Fragment
+  // IFragmentVisibleHelper接口需要被Fragment实现，该接口用于想Fragment中传递一个
+  // IFragmentVisible接口而IFragmentVisible需要在当前Fragment的setUserVisibleHint
+  // 和onHiddenChanged()方法被调用时同步调用以便于正确处理内部的子Fragment
   ///////////////////////////////////////////////////////////////////////////
   override fun registerIFragmentVisible(it: ITrackerFragmentVisible) {
     mIFragmentVisible = it
