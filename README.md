@@ -2,6 +2,8 @@
 
 `AndroidTracker`是一个Android端的无埋点统计的实现方法。其对`Activity`、`Fragment`的生命周期进行监听，实现了页面浏览以及点击事件的采集。
 
+针对点击事件的处理，目前兼容`ActionBar`、`ToolBar`的点击，以及[ButterKnife](https://github.com/JakeWharton/butterknife)的点击注解。
+
 ## 初始化
 
 在工程根目录的`build.gradle`文件的最后添加：
@@ -122,6 +124,21 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
 
   override fun getIFragmentVisible(): ITrackerFragmentVisible? = mIFragmentVisible
 }
+```
+
+## 对点击事件增加属性
+
+在某些场景下，仅对`View`进行默认属性的统计可能无法满足需求，故可以针对点击事件增加自定义属性。示例如下（ButterKnife）：
+
+```java
+@OnClick(R.id.tv_clickable) public void click(View view) {
+      Toast.makeText(view.getContext(), ((TextView) view).getText().toString(), Toast.LENGTH_SHORT)
+          .show();
+      // 此处针对点击事件增加属性
+      Map<String, Object> map = new HashMap<>();
+      map.put("附加的View属性", view.toString());
+      Tracker.INSTANCE.trackView(view, map);
+    }
 ```
 
 
