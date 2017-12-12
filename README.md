@@ -2,7 +2,7 @@
 
 `AndroidTracker`是一个Android端的无埋点统计的实现方法。其对`Activity`、`Fragment`的生命周期进行监听，实现了页面浏览以及点击事件的采集。
 
-### 初始化
+## 初始化
 
 在工程根目录的`build.gradle`文件的最后添加：
 
@@ -45,7 +45,7 @@ class App : Application(), ITrackerContext {
 }
 ```
 
-### Activity中的集成方式
+## Activity中的集成方式
 
 在`Activity`中集成时，如果项目仅存在`Activity`，不需要对`Fragment`进行特殊处理，则仅需要实现`ITrackerHelper`接口，用于获取页面的名称和页面附加属性。
 如果项目中有`Fragment`，需要在特定情况下忽略`Activity`的统计，则还应该实现`ITrackerIgnore`接口，手动处理`isIgnore`方法的返回值。示例如下：
@@ -71,7 +71,7 @@ open class BaseActivity : AppCompatActivity(), ITrackerHelper, ITrackerIgnore {
 }
 ```
 
-### Fragment中的集成方式
+## Fragment中的集成方式
 
 与`Activity`相同，如果`Fragment`中不再有子`Fragment`，则仅需要实现`ITrackerHelper`、`IFragmentVisibleHelper`接口。
 如果有子`Fragment`，或者需要手动忽略部分`Fragment`的统计，则需要实现`ITrackerIgnore`接口。示例如下：
@@ -125,7 +125,7 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
 ```
 
 
-### 上报模式
+## 上报模式
 
 **DEBUG_ONLY**：仅在`Logcat`中打印日志，不上传数据。建议仅在调试阶段使用该模式。
 
@@ -133,7 +133,7 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
 
 **RELEASE**：不在`Logcat`中打印日志，每10条记录尝试上传数据。在发行版本中使用该模式。
 
-### 调试
+## 调试
 
 在`DEBUG_ONLY`、`DEBUG_TRACKE`模式下，可以在`Logcat`中输出日志，格式如下：
 
@@ -176,12 +176,12 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
 }
 ```
 
-### 注意事项
+## 注意事项
 
 由于对点击事件的统计使用到了反射，故集成了该库之后会对点击时的效率有所影响。
 
 
-### License
+## License
 
 ```
 Copyright 2017 Chen Chong
