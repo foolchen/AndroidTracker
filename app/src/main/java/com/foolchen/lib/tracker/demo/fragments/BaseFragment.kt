@@ -26,7 +26,7 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
   }
 
   ///////////////////////////////////////////////////////////////////////////
-  // 该类实现ITrack接口，此处两个方法全部返回null
+  // 该类实现ITrackerHelper接口，此处两个方法全部返回null
   // 则页面名称（别名）会直接取使用canonicalName来当做标题
   // 并且不会有附加的属性
   ///////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
   override fun getTrackProperties(): Map<String, Any?>? = null
 
   ///////////////////////////////////////////////////////////////////////////
-  // IFragments接口用于确定当前Fragment中是否包含子Fragment
+  // ITrackerIgnore接口用于确定当前Fragment中是否包含子Fragment
   // 如果返回值为true，则表明当前Fragment中有包含子Fragment，则此时不会对当前Fragment进行统计
   // 如果返回值为false，则表明当前Fragment中不包含子Fragment，则此时会对当前Fragment进行统计
   // 此处默认不包含子Fragment，如有需要应该在子类中覆写该方法并修改返回值
