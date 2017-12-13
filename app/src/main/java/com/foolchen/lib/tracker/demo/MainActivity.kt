@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.demo.data.Demo
 import com.foolchen.lib.tracker.demo.fragments.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,6 +16,7 @@ class MainActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+    Tracker.trackEvent("MainActivity的自定义追踪事件", null)
 
     // 简单的Fragment
     // 可以显示/隐藏的Fragment

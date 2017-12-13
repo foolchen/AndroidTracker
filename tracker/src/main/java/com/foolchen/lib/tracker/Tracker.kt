@@ -164,6 +164,18 @@ object Tracker {
     }
   }
 
+  /**
+   * 手动对自定义事件进行统计
+   *
+   * @param name 自定义事件的名称，对应内置属性中的event字段
+   * @param properties 要统计的自定义事件的属性
+   */
+  fun trackEvent(name: String, properties: Map<String, Any?>?) {
+    val event = TrackerEvent(name)
+    event.addProperties(properties)
+    trackEvent(event)
+  }
+
   internal fun trackScreen(properties: Map<String, Any?>?) {
     val event = TrackerEvent(VIEW_SCREEN)
     event.addProperties(properties)
