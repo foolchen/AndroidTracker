@@ -75,6 +75,9 @@ class MainActivity : BaseActivity() {
       holder?.itemView?.tag = item
       holder?.itemView?.setOnClickListener {
         startFragment(item.name, item.args)
+        if (position % 2 == 0) {// 在position=0,2,4...时忽略点击事件
+          Tracker.ignoreView(holder.itemView)
+        }
       }
     }
 

@@ -23,3 +23,8 @@ internal const val ELEMENT_TYPE = "element_type"
 internal const val ELEMENT_CONTENT = "element_content"
 internal const val ELEMENT_X = "element_x"
 internal const val ELEMENT_Y = "element_y"
+
+
+// 其他
+// 忽略点击事件
+internal const val IGNORE_CLICK = "ignore_click"

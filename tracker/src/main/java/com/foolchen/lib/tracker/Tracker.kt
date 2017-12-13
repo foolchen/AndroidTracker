@@ -157,11 +157,29 @@ object Tracker {
 
   /**
    * 为要统计的元素增加需要附加的属性
+   *
+   * 注意：该方法不要与[ignoreView]同时调用，否则可能会失效
+   *
+   * @param view 要统计的View
+   * @param properties 要额外添加的属性
    */
   fun trackView(view: View, properties: Map<String, Any?>?) {
     properties?.let {
       elementsProperties.put(view, properties)
     }
+  }
+
+  /**
+   * 忽略View本次的点击事件（该方法仅生效一次，如需每次都忽略，应每次都调用该方法）
+   *
+   * 注意：该方法不要与[trackView]方法同时调用，否则可能会失效
+   *
+   * @param view 要忽略统计的View
+   */
+  fun ignoreView(view: View) {
+    val properties = HashMap<String, Any>()
+    properties.put(IGNORE_CLICK, true)
+    elementsProperties.put(view, properties)
   }
 
   /**
@@ -185,11 +203,21 @@ object Tracker {
 
   /**
    * 对View的点击进行统计
+   *
+   * 注意：在已经调用了[ignoreView]方法时，该方法被会直接返回，并不会执行View的点击事件统计
+   *
+   * @param view 要统计的点击事件View
+   * @param ev 要统计的View点击事件触发时的[MotionEvent]
+   * @param time 点击事件触发时的时间
    */
   internal fun trackView(view: View, ev: MotionEvent, time: Long) {
+    val trackProperties = view.getTrackProperties(ev)
+    if (trackProperties[IGNORE_CLICK] != null && trackProperties[IGNORE_CLICK] == true) {
+      // 如果事件被忽略了，则直接返回
+      return
+    }
     val event = TrackerEvent(CLICK)
     event.time = time
-    val trackProperties = view.getTrackProperties(ev)
     event.addProperties(trackProperties)
     trackEvent(event)
   }
