@@ -32,7 +32,8 @@ class TrackerActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   }
 
   override fun onActivityStarted(activity: Activity?) {
-    if (refs.isEmpty()) {
+    if (Tracker.isBackground && refs.isEmpty()) {
+      // 此处仅从后台切换到前台时触发，首次触发为初始化时，防止首次触发滞后
       Tracker.onForeground()
     }
     activity?.let {

@@ -77,12 +77,20 @@ object Tracker {
     initBuildInProperties(app.getApplicationContext())
     app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())
     isInitialized = true
+
+    // 此处触发第一次启动事件，保证事件的触发在所有其他事件之前
+    onForeground()
   }
 
   /**
    * 设置接口地址
    *
    * AndroidTracker中的数据上报使用了Retrofit，此处需要对host和path进行分别设置
+   *
+   * **注意：该方法要在[initialize]方法之前调用，否则会崩溃**
+   *
+   * @param host 上报数据的域名，例如：https://www.demo.com.cn
+   * @param path 上报数据的接口名，例如：report.php
    */
   fun setService(host: String, path: String) {
     this.serviceHost = host
