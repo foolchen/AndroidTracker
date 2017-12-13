@@ -31,18 +31,20 @@ dependencies {
 class App : Application(), ITrackerContext {
   override fun onCreate() {
     super.onCreate()
-    // 初始化AndroidTracker
-    Tracker.initialize(this)
     // 设定一些通用的属性，这些属性在每次统计事件中都会附带
     // 注意：如果此处的属性名与内置属性的名称相同，则内置属性会被覆盖
     Tracker.addProperty("附加的属性1", "附加的属性1")
     Tracker.addProperty("附加的属性2", "附加的属性2")
     // 设定上报数据的主机和接口
+    // 注意：该方法一定要在Tracker.initialize()方法前调用
+    // 否则会由于上报地址未初始化，在触发启动事件时导致崩溃
     Tracker.setService("https://www.demo.com", "report.php")
     // 设定上报数据的项目名称
     Tracker.setProjectName("android_tracker")
     // 设定上报数据的模式
     Tracker.setMode(TrackerMode.RELEASE)
+    // 初始化AndroidTracker
+    Tracker.initialize(this)
   }
 }
 ```
@@ -197,6 +199,21 @@ Tracker.addProperty("附加的属性1", "附加的属性1")
 Tracker.addProperty("附加的属性2", "附加的属性2")
 ```
 
+## 自定义事件
+
+该库提供了追踪自定义事件的方法，并且可以自定义属性。调用示例如下：
+
+kotlin:
+
+```kotlin
+Tracker.trackEvent("MainActivity的自定义追踪事件", null)
+```
+
+java:
+
+```java
+Tracker.INSTANCE.trackEvent("MainActivity的自定义追踪事件", null)
+```
 
 ## 上报模式
 
@@ -249,10 +266,19 @@ Tracker.addProperty("附加的属性2", "附加的属性2")
 }
 ```
 
+## 忽略处理
+
+### 对Activity/Fragment进行忽略
+
+如果需要对`Activity`/`Fragment`进行忽略，则需要实现`ITrackerIgnore`接口，并手动将`isIgnore()`方法的返回值置为`true`。
+如果要解除对`Activity`/`Fragment`的忽略，则根据情况将返回值置为`false`即可。
+
+### 对点击事件进行忽略
+
+如果要对点击事件进行忽略，则需要在点击事件触发时手动调用`Tracker.ignoreView(view)`方法即可。该方式针对普通的点击监听设置方式以及`ButterKnife`的注解方式都生效。
+
 ## 注意事项
-
 由于对点击事件的统计使用到了反射，故集成了该库之后会对点击时的效率有所影响。
-
 
 ## License
 
