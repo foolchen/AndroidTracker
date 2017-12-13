@@ -18,8 +18,8 @@ import com.foolchen.lib.tracker.R
  */
 class TrackLayout : FrameLayout {
   private val rect = Rect()
-  private var clickFunc: ((View, MotionEvent) -> Unit)? = null
-  private var itemClickFunc: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)? = null
+  private var clickFunc: ((View, MotionEvent, Long) -> Unit)? = null
+  private var itemClickFunc: ((AdapterView<*>, View, Int, Long, MotionEvent, Long) -> Unit)? = null
 
   private val listenerInfoField by lazy {
     // 通过反射拿到mListenerInfo，并且设置为可访问（用于后续替换点击事件）
@@ -52,12 +52,12 @@ class TrackLayout : FrameLayout {
     return super.onTouchEvent(ev)
   }
 
-  internal fun registerClickFunc(func: ((View, MotionEvent) -> Unit)) {
+  internal fun registerClickFunc(func: ((View, MotionEvent, Long) -> Unit)) {
     this@TrackLayout.clickFunc = func
   }
 
   internal fun registerItemClickFunc(
-      func: ((AdapterView<*>, View, Int, Long, MotionEvent) -> Unit)) {
+      func: ((AdapterView<*>, View, Int, Long, MotionEvent, Long) -> Unit)) {
     this@TrackLayout.itemClickFunc = func
   }
 
@@ -201,8 +201,13 @@ class TrackLayout : FrameLayout {
       val ev: MotionEvent) : OnClickListener {
     override fun onClick(view: View) {
       source?.let {
+        // 由于clickFunc的执行是在实际的onClick()方法后，故在统计时可能会有延时
+        // 此处首先记录onClick()的触发时间，在统计时对时间进行纠正，这样数据在入库时
+        // 会记录正确的时间
+        // 但是在日志中查看和上报过程中，可能还是会有滞后
+        val time = System.currentTimeMillis()
         source?.onClick(view)
-        clickFunc?.invoke(view, ev)
+        clickFunc?.invoke(view, ev, time)
       }
 
     }
@@ -214,8 +219,9 @@ class TrackLayout : FrameLayout {
   private inner class ItemClickWrapper(val source: AdapterView.OnItemClickListener,
       val ev: MotionEvent) : AdapterView.OnItemClickListener {
     override fun onItemClick(adapterView: AdapterView<*>, view: View, position: Int, id: Long) {
+      val time = System.currentTimeMillis()
       source.onItemClick(adapterView, view, position, id)
-      itemClickFunc?.invoke(adapterView, view, position, id, ev)
+      itemClickFunc?.invoke(adapterView, view, position, id, ev, time)
     }
   }
 }

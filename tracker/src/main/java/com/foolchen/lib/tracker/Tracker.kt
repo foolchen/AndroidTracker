@@ -186,8 +186,9 @@ object Tracker {
   /**
    * 对View的点击进行统计
    */
-  internal fun trackView(view: View, ev: MotionEvent) {
+  internal fun trackView(view: View, ev: MotionEvent, time: Long) {
     val event = TrackerEvent(CLICK)
+    event.time = time
     val trackProperties = view.getTrackProperties(ev)
     event.addProperties(trackProperties)
     trackEvent(event)
@@ -197,8 +198,9 @@ object Tracker {
    * 对AdapterView的点击进行统计
    */
   internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
-      ev: MotionEvent) {
+      ev: MotionEvent, time: Long) {
     val event = TrackerEvent(CLICK)
+    event.time = time
     val trackProperties = view.getTrackProperties(ev)
     event.addProperties(trackProperties)
     trackEvent(event)
