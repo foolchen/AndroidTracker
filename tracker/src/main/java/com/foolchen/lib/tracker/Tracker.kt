@@ -73,6 +73,8 @@ object Tracker {
    * 如果未调用该方法进行初始化，使用过程中可能会出现无法统计、Crash等情况
    */
   fun initialize(app: ITrackerContext) {
+    if (isDisable()) return
+
     trackContext = app
     initBuildInProperties(app.getApplicationContext())
     app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())
@@ -93,6 +95,8 @@ object Tracker {
    * @param path 上报数据的接口名，例如：report.php
    */
   fun setService(host: String, path: String) {
+    if (isDisable()) return
+
     this.serviceHost = host
     this.servicePath = path
   }
@@ -101,6 +105,8 @@ object Tracker {
    * 设置项目名称
    */
   fun setProjectName(projectName: String) {
+    if (isDisable()) return
+
     this.projectName = projectName
   }
 
@@ -121,6 +127,8 @@ object Tracker {
    * @param clear 设置为true，则之前所有的前向地址、前向类名等都会在App被切换到后台时被清空，从后台切换回App时，访问的页面没有前向地址等信息
    */
   fun clearOnBackground(clear: Boolean) {
+    if (isDisable()) return
+
     clearOnBackground = clear
   }
 
@@ -128,6 +136,8 @@ object Tracker {
    * 增加自定义属性
    */
   fun addProperty(key: String, value: Any?) {
+    if (isDisable()) return
+
     if (value != null) {
       additionalProperties.put(key, value)
     }
@@ -137,6 +147,8 @@ object Tracker {
    * 增加自定义属性
    */
   fun addProperties(properties: Map<String, Any?>?) {
+    if (isDisable()) return
+
     properties?.forEach({
       if (it.value != null) {
         additionalProperties.put(it.key, it.value!!)
@@ -148,6 +160,7 @@ object Tracker {
    * 用户登录
    */
   fun login(userId: String) {
+    if (isDisable()) return
     buildInLogin(userId)
   }
 
@@ -155,11 +168,14 @@ object Tracker {
    * 用户登出
    */
   fun logout() {
+    if (isDisable()) return
     trackContext?.let { buildInLogout() }
 
   }
 
   fun setChannelId(channelId: String?) {
+    if (isDisable()) return
+
     this.channelId = channelId
   }
 
@@ -172,6 +188,8 @@ object Tracker {
    * @param properties 要额外添加的属性
    */
   fun trackView(view: View, properties: Map<String, Any?>?) {
+    if (isDisable()) return
+
     properties?.let {
       elementsProperties.put(view, properties)
     }
@@ -185,6 +203,8 @@ object Tracker {
    * @param view 要忽略统计的View
    */
   fun ignoreView(view: View) {
+    if (isDisable()) return
+
     val properties = HashMap<String, Any>()
     properties.put(IGNORE_CLICK, true)
     elementsProperties.put(view, properties)
@@ -197,6 +217,8 @@ object Tracker {
    * @param properties 要统计的自定义事件的属性
    */
   fun trackEvent(name: String, properties: Map<String, Any?>?) {
+    if (isDisable()) return
+
     val event = TrackerEvent(name)
     event.addProperties(properties)
     trackEvent(event)
@@ -275,4 +297,6 @@ object Tracker {
     }
     isBackground = false
   }
+
+  private fun isDisable(): Boolean = mode == TrackerMode.DISABLE
 }

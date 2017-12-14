@@ -24,5 +24,12 @@ enum class TrackerMode {
    *
    * 该模式为发布时使用的模式，不要在上线时使用该模式
    */
-  RELEASE
+  RELEASE,
+
+  /**
+   * 禁用
+   *
+   * 该模式时，调用的任何方法都会失效
+   */
+  DISABLE
 }

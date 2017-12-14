@@ -125,6 +125,7 @@ object TrackerService {
       TrackerMode.DEBUG_ONLY -> 1
       TrackerMode.DEBUG_TRACK -> 1
       TrackerMode.RELEASE -> mReportThreshold
+      else -> -1
     }
   }
 
