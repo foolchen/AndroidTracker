@@ -1,13 +1,6 @@
 package com.foolchen.lib.tracker.data
 
 import com.foolchen.lib.tracker.Tracker
-import com.foolchen.lib.tracker.Tracker.parent
-import com.foolchen.lib.tracker.Tracker.parentClass
-import com.foolchen.lib.tracker.Tracker.referer
-import com.foolchen.lib.tracker.Tracker.refererClass
-import com.foolchen.lib.tracker.Tracker.screenClass
-import com.foolchen.lib.tracker.Tracker.screenName
-import com.foolchen.lib.tracker.Tracker.screenTitle
 import com.foolchen.lib.tracker.utils.*
 import com.google.gson.annotations.SerializedName
 
@@ -25,6 +18,21 @@ data class TrackerEvent(
   private var properties = HashMap<String, Any>()
   @SerializedName("time")
   internal var time = System.currentTimeMillis()
+
+  @SerializedName("screenName")
+  private var screenName = Tracker.screenName
+  @SerializedName("screenClass")
+  private var screenClass = Tracker.screenClass
+  @SerializedName("screenTitle")
+  private var screenTitle = Tracker.screenTitle
+  @SerializedName("referer")
+  private var referer = Tracker.referer
+  @SerializedName("refererClass")
+  private var refererClass = Tracker.refererClass
+  @SerializedName("parent")
+  private var parent = Tracker.parent
+  @SerializedName("parentClass")
+  private var parentClass = Tracker.parentClass
 
   init {
     Tracker.additionalProperties.filter { it.value != null }.forEach {
