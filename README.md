@@ -21,7 +21,18 @@ allprojects {
 
 ```groovy
 dependencies {
-    compile 'com.github.foolchen:AndroidTracker:0.3.3'
+    implementation 'com.github.foolchen:AndroidTracker:0.3.3'
+}
+```
+
+该库中引用了[okhttp3](https://github.com/square/okhttp)以及[retrofit2](https://github.com/square/retrofit)，如果需要独立引用其他版本的`okhttp`和`retrofit`，则可以引用如下：
+
+```groovy
+dependencies {
+    implementation ("com.github.foolchen:AndroidTracker:0.3.3"){
+        exclude module: 'okhttp'
+        exclude module: 'retrofit'
+    }
 }
 ```
 
