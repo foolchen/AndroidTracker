@@ -21,7 +21,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    compile 'com.github.foolchen:AndroidTracker:0.3.0'
+    compile 'com.github.foolchen:AndroidTracker:0.3.3'
 }
 ```
 
@@ -222,6 +222,8 @@ Tracker.INSTANCE.trackEvent("MainActivity的自定义追踪事件", null)
 **DEBUG_TRACK**：在`Logcat`中打印日志，并且**即时**上传数据。建议在开发及测试阶段使用该模式。
 
 **RELEASE**：不在`Logcat`中打印日志，每10条记录尝试上传数据。在发行版本中使用该模式。
+
+**DISABLE**：禁用上报。设置该模式时，所有的上报相关方法都失效。如果想要重新生效，需要重新初始化。
 
 ## 调试
 
