@@ -157,11 +157,11 @@ object TrackerService {
     val array = ArrayList<Map<String, Any>>(events.size)
     events.mapTo(array) { it.build() }
     var json = GSON.toJson(array)
-    if (Tracker.isUrlEncodeEnable) {
-      json = json.urlEncode()
-    }
     if (Tracker.isBase64EncodeEnable) {
       json = json.encodeBASE64()
+    }
+    if (Tracker.isUrlEncodeEnable) {
+      json = json.urlEncode()
     }
     return json
   }
