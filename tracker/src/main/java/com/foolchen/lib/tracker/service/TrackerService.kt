@@ -7,6 +7,8 @@ import com.foolchen.lib.tracker.data.TrackerMode
 import com.foolchen.lib.tracker.db.EventContract
 import com.foolchen.lib.tracker.db.database
 import com.foolchen.lib.tracker.utils.GSON
+import com.foolchen.lib.tracker.utils.encodeBASE64
+import com.foolchen.lib.tracker.utils.urlEncode
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -154,7 +156,14 @@ object TrackerService {
   private fun prepareReportJson(events: List<TrackerEvent>): String {
     val array = ArrayList<Map<String, Any>>(events.size)
     events.mapTo(array) { it.build() }
-    return GSON.toJson(array)
+    var json = GSON.toJson(array)
+    if (Tracker.isUrlEncodeEnable) {
+      json = json.urlEncode()
+    }
+    if (Tracker.isBase64EncodeEnable) {
+      json = json.encodeBASE64()
+    }
+    return json
   }
 
   /** 对事件列表进行持久化 */

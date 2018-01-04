@@ -60,6 +60,8 @@ object Tracker {
   internal var serviceHost: String? = null
   internal var servicePath: String? = null
   internal var projectName: String? = null
+  internal var isBase64EncodeEnable = true
+  internal var isUrlEncodeEnable = true
   /**
    * 上报接口的默认超时时间为3000ms
    */
@@ -108,6 +110,20 @@ object Tracker {
     if (isDisable()) return
 
     this.projectName = projectName
+  }
+
+  /**
+   * 设置是否要对上报的数据进行BASE64编码，默认为开启
+   */
+  fun setBase64EncodeEnable(enable: Boolean) {
+    this.isBase64EncodeEnable = enable
+  }
+
+  /**
+   * 设置是否要对上报的数据进行Url编码，默认为开启
+   */
+  fun setUrlEncodeEnable(enable: Boolean) {
+    this.isUrlEncodeEnable = enable
   }
 
   /**
