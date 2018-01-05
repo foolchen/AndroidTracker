@@ -62,7 +62,7 @@ object TrackerService {
     } else if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
       // 如果为debug&track模式，则直接上传数据，并且不关注失败
       mService.report(Tracker.servicePath!!, Tracker.projectName!!,
-          GSON.toJson(listOf(event.build())),
+          prepareReportJson(listOf(event)),
           mode()).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(
           IgnoreObserver())
     }
