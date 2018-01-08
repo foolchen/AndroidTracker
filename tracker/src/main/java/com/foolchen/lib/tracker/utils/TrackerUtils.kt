@@ -114,6 +114,17 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   return properties
 }
 
+/** 根据枚举类型来计算上报接口时使用的模式 */
+internal fun mode(): Int {
+  return when (Tracker.mode) {
+    TrackerMode.DEBUG_ONLY -> 1
+    TrackerMode.DEBUG_TRACK -> 2
+    else -> {
+      3
+    }
+  }
+}
+
 /**
  * 对事件进行统计
  *

@@ -26,5 +26,5 @@ interface TrackerAPIDef {
   @FormUrlEncoded
   @POST("{url}")
   fun report(@Path("url") path: String, @Field("project") projectName: String, @Field(
-      "data") data: String, @Field("mode") mode: Int): Observable<Response<String>>
+      "data_List") data: String, @Field("mode") mode: Int): Observable<Response<String>>
 }

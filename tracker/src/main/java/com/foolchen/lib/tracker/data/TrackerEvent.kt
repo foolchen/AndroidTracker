@@ -54,6 +54,8 @@ data class TrackerEvent(
     o.putAll(buildInObject)
     o.put(EVENT, event)
     o.put(TIME, time)
+    Tracker.projectName?.let { o.put("project", it) }
+    o.put("mode", mode())
 
     o.put(LIB, buildInLib)
     val properties = HashMap<String, Any>()

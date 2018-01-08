@@ -8,6 +8,7 @@ import com.foolchen.lib.tracker.db.EventContract
 import com.foolchen.lib.tracker.db.database
 import com.foolchen.lib.tracker.utils.GSON
 import com.foolchen.lib.tracker.utils.encodeBASE64
+import com.foolchen.lib.tracker.utils.mode
 import com.foolchen.lib.tracker.utils.urlEncode
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -108,17 +109,6 @@ object TrackerService {
             failureFunc.invoke(events)
           }
         })
-  }
-
-  /** 根据枚举类型来计算上报接口时使用的模式 */
-  private fun mode(): Int {
-    return when (Tracker.mode) {
-      TrackerMode.DEBUG_ONLY -> 1
-      TrackerMode.DEBUG_TRACK -> 2
-      else -> {
-        3
-      }
-    }
   }
 
   /** 根据当前的上报模式计算触发上报的阈值 */
