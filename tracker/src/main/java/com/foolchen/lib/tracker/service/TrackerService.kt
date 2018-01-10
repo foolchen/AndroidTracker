@@ -8,13 +8,14 @@ import com.foolchen.lib.tracker.db.EventContract
 import com.foolchen.lib.tracker.db.database
 import com.foolchen.lib.tracker.utils.GSON
 import com.foolchen.lib.tracker.utils.encodeBASE64
-import com.foolchen.lib.tracker.utils.mode
 import com.foolchen.lib.tracker.utils.urlEncode
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import org.jetbrains.anko.db.*
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -62,9 +63,10 @@ object TrackerService {
       }
     } else if (Tracker.mode == TrackerMode.DEBUG_TRACK) {
       // 如果为debug&track模式，则直接上传数据，并且不关注失败
-      mService.report(Tracker.servicePath!!, Tracker.projectName!!,
-          prepareReportJson(listOf(event)),
-          mode()).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe(
+      mService.report(Tracker.servicePath!!,
+          createRequestBody(prepareReportJson(listOf(event)))).subscribeOn(
+          Schedulers.io()).observeOn(
+          Schedulers.io()).subscribe(
           IgnoreObserver())
     }
   }
@@ -84,8 +86,8 @@ object TrackerService {
           events
         }
         .flatMap {
-          mService.report(Tracker.servicePath!!, Tracker.projectName!!,
-              prepareReportJson(it), mode())
+          mService.report(Tracker.servicePath!!,
+              createRequestBody(prepareReportJson(it)))
         }
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
@@ -155,6 +157,9 @@ object TrackerService {
     }
     return json
   }
+
+  private fun createRequestBody(s: String) = RequestBody.create(MediaType.parse("text/plain"),
+      "data_list=$s")
 
   /** 对事件列表进行持久化 */
   private fun serializeEvents(events: List<TrackerEvent>) {
