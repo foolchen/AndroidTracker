@@ -54,7 +54,7 @@ data class TrackerEvent(
     o.putAll(buildInObject)
     o.put(EVENT, event)
     o.put(TIME, time)
-    Tracker.projectName?.let { o.put("project", it) }
+    Tracker.projectName?.let { o.put("project_name", it) }
     o.put("mode", mode())
     o.put("type", "track")
 
