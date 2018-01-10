@@ -4,6 +4,8 @@
 
 针对点击事件的处理，目前兼容`ActionBar`、`ToolBar`的点击，以及[ButterKnife](https://github.com/JakeWharton/butterknife)的点击注解。
 
+支持版本为API 14及以上（Android 4.0及以上）。
+
 ## 初始化
 
 在工程根目录的`build.gradle`文件的最后添加：
