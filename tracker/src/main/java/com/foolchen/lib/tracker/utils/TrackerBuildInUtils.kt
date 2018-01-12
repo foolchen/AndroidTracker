@@ -21,13 +21,17 @@ internal val buildInLib: HashMap<String, Any> = HashMap()
 internal val buildInProperties: HashMap<String, Any> = HashMap()
 
 internal var buildInUUID = ""
+// 用于标识是否已经登录
+internal var isLogin = false
 
 /**
  * 获取内置属性
  */
 internal fun initBuildInProperties(context: Context) {
   buildInUUID = context.getUUID()
-  buildInObject.put(DISTINCT_ID, buildInUUID)
+  if (!isLogin) {
+    buildInObject.put(DISTINCT_ID, buildInUUID)
+  }
 
   buildInLib.put("lib", "Android")
   buildInLib.put("lib_version", BuildConfig.VERSION_NAME)
@@ -50,10 +54,12 @@ internal fun initBuildInProperties(context: Context) {
 
 internal fun login(userId: String) {
   buildInObject.put(DISTINCT_ID, userId)
+  isLogin = true
 }
 
 internal fun logout() {
   buildInObject.put(DISTINCT_ID, buildInUUID)
+  isLogin = false
 }
 
 /**
