@@ -27,7 +27,7 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
       refs.add(WeakReference(f))
     }
     f?.let {
-      if (isParentVisible(f) && !isParentFragment(f) && isVisible(f)) {
+      if (isAncestorVisible(f) && !isParentFragment(f) && isVisible(f)) {
         // 如果父Fragment可见
         // 并且本身不是父Fragment
         // 并且本身可见，则进行统计

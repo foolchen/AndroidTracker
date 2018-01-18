@@ -26,7 +26,7 @@ class App : Application(), ITrackerContext {
     // 设定上报数据的项目名称
     Tracker.setProjectName(BuildConfig.PROJECT_NAME)
     // 设定上报数据的模式
-    Tracker.setMode(TrackerMode.RELEASE)
+    Tracker.setMode(TrackerMode.DEBUG_ONLY)
     // 初始化AndroidTracker
     Tracker.initialize(this)
 
