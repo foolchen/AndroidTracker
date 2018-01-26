@@ -83,7 +83,7 @@ object Tracker {
     isInitialized = true
 
     // 此处触发第一次启动事件，保证事件的触发在所有其他事件之前
-    onForeground()
+    //onForeground()
   }
 
   /**
@@ -155,7 +155,7 @@ object Tracker {
     if (isDisable()) return
 
     if (value != null) {
-      additionalProperties.put(key, value)
+      additionalProperties[key] = value
     }
   }
 
@@ -167,7 +167,7 @@ object Tracker {
 
     properties?.forEach({
       if (it.value != null) {
-        additionalProperties.put(it.key, it.value!!)
+        additionalProperties[it.key] = it.value!!
       }
     })
   }
@@ -222,8 +222,8 @@ object Tracker {
     if (isDisable()) return
 
     val properties = HashMap<String, Any>()
-    properties.put(IGNORE_CLICK, true)
-    elementsProperties.put(view, properties)
+    properties[IGNORE_CLICK] = true
+    elementsProperties[view] = properties
   }
 
   /**
@@ -288,7 +288,7 @@ object Tracker {
     if (isInitialized) {
       val event = TrackerEvent(APP_END)
       val properties = HashMap<String, Any>()
-      properties.put(EVENT_DURATION, System.currentTimeMillis() - appStartTime)
+      properties[EVENT_DURATION] = System.currentTimeMillis() - appStartTime
       event.addProperties(properties)
       trackEvent(event, background = true)
     }
@@ -307,7 +307,7 @@ object Tracker {
     if (isInitialized) {
       val event = TrackerEvent(APP_START)
       val properties = HashMap<String, Any>()
-      properties.put(RESUME_FROM_BACKGROUND, isBackground)
+      properties[RESUME_FROM_BACKGROUND] = isBackground
       event.addProperties(properties)
       trackEvent(event, foreground = true)
     }
