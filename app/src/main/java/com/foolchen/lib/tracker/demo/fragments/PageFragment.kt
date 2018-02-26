@@ -1,5 +1,6 @@
 package com.foolchen.lib.tracker.demo.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -58,5 +59,5 @@ class PageFragment : BaseFragment() {
 
   override fun isIgnored(): Boolean = hasChildren
 
-  override fun getTrackName(): String? = tv_desc?.text.toString()
+  override fun getTrackName(context: Context): String? = tv_desc?.text.toString()
 }

@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.AdapterView
 import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ITrackerContext
-import com.foolchen.lib.tracker.lifecycle.ITrackerFragmentVisible
 import com.foolchen.lib.tracker.lifecycle.TrackerActivityLifeCycle
 import com.foolchen.lib.tracker.utils.*
 import java.util.*
@@ -57,7 +56,7 @@ object Tracker {
 
   internal var appStartTime = 0L
 
-  internal var trackContext: ITrackerContext? = null
+  internal lateinit var trackContext: ITrackerContext
 
   internal var serviceHost: String? = null
   internal var servicePath: String? = null
