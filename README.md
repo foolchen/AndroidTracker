@@ -90,21 +90,24 @@ open class BaseActivity : AppCompatActivity(), ITrackerHelper, ITrackerIgnore {
 
 ## Fragment中的集成方式
 
-与`Activity`相同，如果`Fragment`中不再有子`Fragment`，则仅需要实现`ITrackerHelper`、`IFragmentVisibleHelper`接口。
+与`Activity`相同，如果`Fragment`中不再有子`Fragment`，则仅需要实现`ITrackerHelper`。
 如果有子`Fragment`，或者需要手动忽略部分`Fragment`的统计，则需要实现`ITrackerIgnore`接口。示例如下：
 
 ```kotlin
-open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentVisibleHelper {
-  private var mIFragmentVisible: ITrackerFragmentVisible? = null
+open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore {
 
+  ///////////////////////////////////////////////////////////////////////////
+  // Tracker.setUserVisibleHint()和Tracker.onHiddenChanged()方法用于同步Fragment
+  // 的可见性，解决在Fragment显隐/与ViewPager结合使用时无法触发生命周期的问题
+  ///////////////////////////////////////////////////////////////////////////
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {
     super.setUserVisibleHint(isVisibleToUser)
-    mIFragmentVisible?.onFragmentVisibilityChanged(isVisibleToUser, this)
+    Tracker.setUserVisibleHint(this, isVisibleToUser)
   }
 
   override fun onHiddenChanged(hidden: Boolean) {
     super.onHiddenChanged(hidden)
-    mIFragmentVisible?.onFragmentVisibilityChanged(!hidden, this)
+    Tracker.onHiddenChanged(this, hidden)
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -123,21 +126,6 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore, IFragmentV
   // 此处默认不包含子Fragment，如有需要应该在子类中覆写该方法并修改返回值
   ///////////////////////////////////////////////////////////////////////////
   override fun isIgnored(): Boolean = false
-
-  ///////////////////////////////////////////////////////////////////////////
-  // IFragmentVisibleHelper接口需要被Fragment实现，该接口用于想Fragment中传递一个
-  // IFragmentVisible接口而IFragmentVisible需要在当前Fragment的setUserVisibleHint
-  // 和onHiddenChanged()方法被调用时同步调用以便于正确处理内部的子Fragment
-  ///////////////////////////////////////////////////////////////////////////
-  override fun registerIFragmentVisible(it: ITrackerFragmentVisible) {
-    mIFragmentVisible = it
-  }
-
-  override fun unregisterIFragmentVisible(it: ITrackerFragmentVisible) {
-    mIFragmentVisible = null
-  }
-
-  override fun getIFragmentVisible(): ITrackerFragmentVisible? = mIFragmentVisible
 }
 ```
 
