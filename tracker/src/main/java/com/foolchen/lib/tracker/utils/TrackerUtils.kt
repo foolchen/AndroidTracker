@@ -31,7 +31,7 @@ const val TAG = "AndroidTracker"
 internal fun Activity.getTrackName(): String {
   var name: String? = null
   if (this is ITrackerHelper) {
-    name = this.getTrackName()
+    name = this.getTrackName(Tracker.trackContext.getApplicationContext())
   }
   if (name.isNullOrEmpty()) {
     name = this.javaClass.canonicalName
@@ -48,7 +48,7 @@ internal fun Activity.getTrackName(): String {
 internal fun Fragment.getTrackName(): String {
   var name: String? = null
   if (this is ITrackerHelper) {
-    name = this.getTrackName()
+    name = this.getTrackName(Tracker.trackContext.getApplicationContext())
   }
   if (name.isNullOrEmpty()) {
     name = this.javaClass.canonicalName
@@ -69,9 +69,9 @@ internal fun Fragment.getTrackTitle(): String = activity?.getTrackTitle() ?: ""
 internal fun Activity.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
   if (this is ITrackerHelper) {
-    this.getTrackProperties()?.let {
+    this.getTrackProperties(Tracker.trackContext.getApplicationContext())?.let {
       it.filter { it.value != null }.forEach {
-        properties.put(it.key, it.value!!)
+        properties[it.key] = it.value!!
       }
     }
   }
@@ -84,9 +84,9 @@ internal fun Activity.getTrackProperties(): Map<String, Any> {
 internal fun Fragment.getTrackProperties(): Map<String, Any> {
   val properties = HashMap<String, Any>()
   if (this is ITrackerHelper) {
-    this.getTrackProperties()?.let {
+    this.getTrackProperties(Tracker.trackContext.getApplicationContext())?.let {
       it.filter { it.value != null }.forEach {
-        properties.put(it.key, it.value!!)
+        properties[it.key] = it.value!!
       }
     }
   }
@@ -96,9 +96,9 @@ internal fun Fragment.getTrackProperties(): Map<String, Any> {
 internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   // 首先获取元素本身的属性
   val properties = HashMap<String, Any>()
-  properties.put(ELEMENT_TYPE, this.javaClass.name)
+  properties[ELEMENT_TYPE] = this.javaClass.name
   if (this is TextView) {
-    properties.put(ELEMENT_CONTENT, this.text?.toString() ?: "")
+    properties[ELEMENT_CONTENT] = this.text?.toString() ?: ""
   }
   /*ev?.let {
     properties.put(ELEMENT_X, ev.x)
@@ -108,7 +108,7 @@ internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   // 然后获取开发者附加的属性
   val additionalProperties = Tracker.elementsProperties[this]
   additionalProperties?.filter { it.value != null }?.forEach {
-    properties.put(it.key, it.value!!)
+    properties[it.key] = it.value!!
   }
   Tracker.elementsProperties.remove(this)
   return properties

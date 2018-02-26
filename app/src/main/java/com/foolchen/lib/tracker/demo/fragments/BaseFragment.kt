@@ -1,5 +1,6 @@
 package com.foolchen.lib.tracker.demo.fragments
 
+import android.content.Context
 import android.support.v4.app.Fragment
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.lifecycle.ITrackerHelper
@@ -32,9 +33,9 @@ open class BaseFragment : Fragment(), ITrackerHelper, ITrackerIgnore {
   // 则页面名称（别名）会直接取使用canonicalName来当做标题
   // 并且不会有附加的属性
   ///////////////////////////////////////////////////////////////////////////
-  override fun getTrackName(): String? = null
+  override fun getTrackName(context: Context): String? = null
 
-  override fun getTrackProperties(): Map<String, Any?>? = null
+  override fun getTrackProperties(context: Context): Map<String, Any?>? = null
 
   ///////////////////////////////////////////////////////////////////////////
   // ITrackerIgnore接口用于确定当前Fragment中是否包含子Fragment

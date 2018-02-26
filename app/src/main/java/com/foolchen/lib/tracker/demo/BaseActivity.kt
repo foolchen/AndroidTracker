@@ -1,5 +1,6 @@
 package com.foolchen.lib.tracker.demo
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import com.foolchen.lib.tracker.lifecycle.ITrackerIgnore
 import com.foolchen.lib.tracker.lifecycle.ITrackerHelper
@@ -16,9 +17,9 @@ open class BaseActivity : AppCompatActivity(), ITrackerHelper, ITrackerIgnore {
   // 则页面名称（别名）会直接取使用canonicalName来当做标题
   // 并且不会有附加的属性
   ///////////////////////////////////////////////////////////////////////////
-  override fun getTrackName(): String? = null
+  override fun getTrackName(context: Context): String? = null
 
-  override fun getTrackProperties(): Map<String, Any?>? = null
+  override fun getTrackProperties(context: Context): Map<String, Any?>? = null
 
   ///////////////////////////////////////////////////////////////////////////
   // ITrackerIgnore接口用于确定当前Activity中是否包含Fragment

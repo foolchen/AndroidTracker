@@ -1,5 +1,6 @@
 package com.foolchen.lib.tracker.demo
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -44,12 +45,12 @@ class MainActivity : BaseActivity() {
     rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     rv.adapter = adapter
 
-    title = getTrackName()
+    title = getTrackName(this)
   }
 
-  override fun getTrackName() = "主Activity"
+  override fun getTrackName(context: Context) = "主Activity"
 
-  override fun getTrackProperties() = null
+  override fun getTrackProperties(context: Context) = null
 
   private fun buildArgs(isVisibilityEnable: Boolean, isChildrenEnable: Boolean): Bundle {
     val args = Bundle()
