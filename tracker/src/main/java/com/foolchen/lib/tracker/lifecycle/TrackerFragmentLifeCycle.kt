@@ -1,11 +1,14 @@
 package com.foolchen.lib.tracker.lifecycle
 
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.view.View
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.getTrackTitle
+import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
 
 /**
@@ -19,10 +22,14 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
 
   private val refs = ArrayList<WeakReference<Fragment>>()
 
-  override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
+  /*override fun onFragmentViewCreated(fm: FragmentManager?, f: Fragment?, v: View?,
+      savedInstanceState: Bundle?) {
     if (f is IFragmentVisibleHelper) {
-      f.registerIFragmentVisible(this)
+      f.registerIFragmentVisible(SoftReference(this))
     }
+  }*/
+
+  override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
     if (f != null) {
       refs.add(WeakReference(f))
     }
@@ -56,10 +63,13 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
         break
       }
     }
+  }
+
+  /*override fun onFragmentViewDestroyed(fm: FragmentManager?, f: Fragment?) {
     if (f is IFragmentVisibleHelper) {
       f.unregisterIFragmentVisible(this)
     }
-  }
+  }*/
 
   private fun track(f: Fragment) {
     val screenName = f.getTrackName()
@@ -94,10 +104,14 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
   private fun findVisibleChildren(parent: Fragment): List<Fragment> {
     val children = ArrayList<Fragment>()
     refs.filter {
-      // 此处用于过滤掉父Fragment不符的Fragment
+      // 首先过滤掉已经被忽略的Fragment
       val child = it.get()
-      child != null && checkParent(child, parent)
+      !(child is ITrackerIgnore && child.isIgnored())
     }.filter {
+          // 此处用于过滤掉父Fragment不符的Fragment
+          val child = it.get()
+          child != null && checkParent(child, parent)
+        }.filter {
       // 此处用于过滤掉不可见的Fragment
       val child = it.get()
       child != null && !child.isHidden && child.userVisibleHint && isAncestorVisible(child)

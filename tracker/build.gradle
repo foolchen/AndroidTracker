@@ -16,6 +16,15 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+
+  sourceSets {
+    main {
+      java {
+        include '**/*.java'
+        include '**/*.kt'
+      }
+    }
+  }
 }
 
 dependencies {

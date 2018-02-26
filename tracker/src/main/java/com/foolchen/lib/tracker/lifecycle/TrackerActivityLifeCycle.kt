@@ -22,6 +22,10 @@ class TrackerActivityLifeCycle : Application.ActivityLifecycleCallbacks {
   private val fragmentLifeCycle = TrackerFragmentLifeCycle()
   private val refs = ArrayList<WeakReference<Activity>>()
 
+  fun getFragmentLifeCycle(): TrackerFragmentLifeCycle {
+    return fragmentLifeCycle
+  }
+
   override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
     if (activity != null) {
       wrap(activity)

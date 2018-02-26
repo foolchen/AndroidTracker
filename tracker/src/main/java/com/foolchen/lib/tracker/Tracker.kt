@@ -1,10 +1,12 @@
 package com.foolchen.lib.tracker
 
+import android.support.v4.app.Fragment
 import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import com.foolchen.lib.tracker.data.*
 import com.foolchen.lib.tracker.lifecycle.ITrackerContext
+import com.foolchen.lib.tracker.lifecycle.ITrackerFragmentVisible
 import com.foolchen.lib.tracker.lifecycle.TrackerActivityLifeCycle
 import com.foolchen.lib.tracker.utils.*
 import java.util.*
@@ -69,6 +71,8 @@ object Tracker {
 
   private var isInitialized = false
 
+  private var trackerActivityLifeCycle: TrackerActivityLifeCycle? = null
+
   /**
    * 对AndroidTracker进行初始化
    *
@@ -79,7 +83,8 @@ object Tracker {
 
     trackContext = app
     initBuildInProperties(app.getApplicationContext())
-    app.registerActivityLifecycleCallbacks(TrackerActivityLifeCycle())
+    trackerActivityLifeCycle = TrackerActivityLifeCycle()
+    app.registerActivityLifecycleCallbacks(trackerActivityLifeCycle!!)
     isInitialized = true
 
     // 此处触发第一次启动事件，保证事件的触发在所有其他事件之前
@@ -239,6 +244,16 @@ object Tracker {
     event.addProperties(properties)
     trackEvent(event)
   }
+
+  fun onHiddenChanged(f: Fragment, hidden: Boolean) {
+    trackerActivityLifeCycle?.getFragmentLifeCycle()?.onFragmentVisibilityChanged(!hidden, f)
+  }
+
+  fun setUserVisibleHint(f: Fragment, isVisibleToUser: Boolean) {
+    trackerActivityLifeCycle?.getFragmentLifeCycle()?.onFragmentVisibilityChanged(isVisibleToUser,
+        f)
+  }
+
 
   internal fun trackScreen(properties: Map<String, Any?>?) {
     val event = TrackerEvent(VIEW_SCREEN)
