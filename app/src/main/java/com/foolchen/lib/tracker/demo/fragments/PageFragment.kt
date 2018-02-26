@@ -59,5 +59,5 @@ class PageFragment : BaseFragment() {
 
   override fun isIgnored(): Boolean = hasChildren
 
-  override fun getTrackName(context: Context): String? = tv_desc?.text.toString()
+  override fun getTrackName(context: Context): String? = "Fragment#${arguments!![KEY_POSITION]}"
 }

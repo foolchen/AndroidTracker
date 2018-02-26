@@ -31,6 +31,7 @@ class ViewPagerFragment : BaseFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     vp.adapter = VpAdapter(childFragmentManager, isChildrenEnable)
+    stl.setViewPager(vp)
   }
 
   override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -67,5 +68,9 @@ private class VpAdapter : FragmentStatePagerAdapter {
 
   override fun getItem(position: Int): Fragment = PageFragment.newInstance(position,
       isChildrenEnable)
+
+  override fun getPageTitle(position: Int): CharSequence? {
+    return "Fragment#$position"
+  }
 }
 

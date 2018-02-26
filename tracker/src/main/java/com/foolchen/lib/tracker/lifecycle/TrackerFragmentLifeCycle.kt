@@ -1,15 +1,13 @@
 package com.foolchen.lib.tracker.lifecycle
 
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.view.View
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.utils.getTrackName
 import com.foolchen.lib.tracker.utils.getTrackProperties
 import com.foolchen.lib.tracker.utils.getTrackTitle
-import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
+import java.util.*
 
 /**
  * 该类用于监听所有Fragment的生命周期<p/>
@@ -21,13 +19,7 @@ import java.lang.ref.WeakReference
 class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), ITrackerFragmentVisible {
 
   private val refs = ArrayList<WeakReference<Fragment>>()
-
-  /*override fun onFragmentViewCreated(fm: FragmentManager?, f: Fragment?, v: View?,
-      savedInstanceState: Bundle?) {
-    if (f is IFragmentVisibleHelper) {
-      f.registerIFragmentVisible(SoftReference(this))
-    }
-  }*/
+  private val trackedRefs = WeakHashMap<Fragment, Boolean>()
 
   override fun onFragmentResumed(fm: FragmentManager?, f: Fragment?) {
     if (f != null) {
@@ -51,6 +43,8 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
           track(it)
         }
       }
+    } else {
+      trackedRefs.remove(f)
     }
   }
 
@@ -63,15 +57,14 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
         break
       }
     }
+    trackedRefs.remove(f)
   }
 
-  /*override fun onFragmentViewDestroyed(fm: FragmentManager?, f: Fragment?) {
-    if (f is IFragmentVisibleHelper) {
-      f.unregisterIFragmentVisible(this)
-    }
-  }*/
-
   private fun track(f: Fragment) {
+    if (trackedRefs[f] == true) {
+      return
+    }
+
     val screenName = f.getTrackName()
     Tracker.referer = Tracker.screenName
     Tracker.refererClass = Tracker.screenClass
@@ -94,6 +87,8 @@ class TrackerFragmentLifeCycle : FragmentManager.FragmentLifecycleCallbacks(), I
     Tracker.parent = parentAlias
     Tracker.parentClass = parent
     Tracker.trackScreen(f.getTrackProperties())
+
+    trackedRefs[f] = true
   }
 
   /**

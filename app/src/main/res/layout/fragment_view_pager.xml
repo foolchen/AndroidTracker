@@ -6,13 +6,12 @@
     android:layout_height="match_parent"
     >
 
-  <TextView
-      android:id="@+id/tv_desc"
+  <com.ogaclejapan.smarttablayout.SmartTabLayout
+      android:id="@+id/stl"
       android:layout_width="match_parent"
-      android:layout_height="45dp"
-      android:gravity="center"
-      android:text="@string/text_vp_fragment"
+      android:layout_height="40dp"
       />
+
 
   <android.support.v4.view.ViewPager
       android:id="@+id/vp"
@@ -20,7 +19,7 @@
       android:layout_height="0dp"
       android:background="@color/colorAccent"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/tv_desc"
+      app:layout_constraintTop_toBottomOf="@id/stl"
       />
 
 </android.support.constraint.ConstraintLayout>
