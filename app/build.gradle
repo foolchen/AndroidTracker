@@ -55,6 +55,23 @@ dependencies {
   //Optional: see how to use the utility.
   implementation 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'
 
+  implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
+  implementation("io.reactivex.rxjava2:rxandroid:$rx_android_version") {
+    exclude module: 'rxjava'
+  }
+  implementation("com.jakewharton.rxbinding2:rxbinding:$rx_binding_version") {
+    exclude module: 'rxjava'
+    exclude module: 'rxandroid'
+  }
+  implementation("com.jakewharton.rxbinding2:rxbinding-support-v4:$rx_binding_version") {
+    exclude module: 'rxjava'
+    exclude module: 'rxandroid'
+  }
+  implementation("com.jakewharton.rxbinding2:rxbinding-appcompat-v7:$rx_binding_version") {
+    exclude module: 'rxjava'
+    exclude module: 'rxandroid'
+  }
+
   kapt "com.jakewharton:butterknife-compiler:$butter_knife_version"
 }
 
