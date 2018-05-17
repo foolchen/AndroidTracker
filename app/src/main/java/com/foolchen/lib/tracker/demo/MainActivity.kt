@@ -50,7 +50,7 @@ class MainActivity : BaseActivity() {
 
   override fun getTrackName(context: Context) = "主Activity"
 
-  override fun getTrackProperties(context: Context) = null
+  override fun getTrackProperties(context: Context): Map<String, Any?>? = null
 
   private fun buildArgs(isVisibilityEnable: Boolean, isChildrenEnable: Boolean): Bundle {
     val args = Bundle()
@@ -70,11 +70,11 @@ class MainActivity : BaseActivity() {
       return FragmentsHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: FragmentsHolder?, position: Int) {
+    override fun onBindViewHolder(holder: FragmentsHolder, position: Int) {
       val item = getItem(position)
-      holder?.textView?.text = item.desc
-      holder?.itemView?.tag = item
-      holder?.itemView?.setOnClickListener {
+      holder.textView?.text = item.desc
+      holder.itemView?.tag = item
+      holder.itemView?.setOnClickListener {
         startFragment(item.name, item.args)
         if (position % 2 == 0) {// 在position=0,2,4...时忽略点击事件
           Tracker.ignoreView(holder.itemView)
