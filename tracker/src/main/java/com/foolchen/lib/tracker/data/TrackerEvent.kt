@@ -36,7 +36,7 @@ data class TrackerEvent(
 
   init {
     Tracker.additionalProperties.filter { it.value != null }.forEach {
-      this@TrackerEvent.properties.put(it.key, it.value!!)
+      this@TrackerEvent.properties[it.key] = it.value!!
     }
   }
 
@@ -45,29 +45,28 @@ data class TrackerEvent(
       return
     }
     properties.filter { it.value != null }.forEach {
-      this@TrackerEvent.properties.put(it.key, it.value!!)
+      this@TrackerEvent.properties[it.key] = it.value!!
     }
   }
 
   fun build(): Map<String, Any> {
     val o = HashMap<String, Any>()
     o.putAll(buildInObject)
-    o.put(EVENT, event)
-    o.put(TIME, time)
+    o[EVENT] = event
+    o[TIME] = time
 
-    o.put(LIB, buildInLib)
+    o[LIB] = buildInLib
     val properties = HashMap<String, Any>()
     properties.putAll(buildInProperties)
-    properties.put(SCREEN_NAME, screenName)
-    properties.put(SCREEN_CLASS, screenClass)
-    properties.put(TITLE, screenTitle)
-    properties.put(REFERER, referer)
-    properties.put(REFERER_CLASS, refererClass)
-    properties.put(PARENT, parent)
-    properties.put(PARENT_CLASS, parentClass)
-    Tracker.trackContext?.let {
-      properties.put(NETWORK_TYPE,
-          it.getApplicationContext().getNetworkType().desc())
+    properties[SCREEN_NAME] = screenName
+    properties[SCREEN_CLASS] = screenClass
+    properties[TITLE] = screenTitle
+    properties[REFERER] = referer
+    properties[REFERER_CLASS] = refererClass
+    properties[PARENT] = parent
+    properties[PARENT_CLASS] = parentClass
+    Tracker.trackContext.let {
+      properties[NETWORK_TYPE] = it.getApplicationContext().getNetworkType().desc()
       properties.put(WIFI, it.getApplicationContext().isWiFi())
     }
     Tracker.channelId?.let {
@@ -77,7 +76,7 @@ data class TrackerEvent(
       properties.putAll(it)
     }
 
-    o.put(PROPERTIES, properties)
+    o[PROPERTIES] = properties
     return o
   }
 

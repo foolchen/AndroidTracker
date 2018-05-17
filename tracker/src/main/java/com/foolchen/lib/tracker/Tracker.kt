@@ -189,7 +189,7 @@ object Tracker {
    */
   fun logout() {
     if (isDisable()) return
-    trackContext?.let { buildInLogout() }
+    trackContext.let { buildInLogout() }
 
   }
 
@@ -285,6 +285,7 @@ object Tracker {
   /**
    * 对AdapterView的点击进行统计
    */
+  @Suppress("UNUSED_PARAMETER")
   internal fun trackAdapterView(adapterView: AdapterView<*>, view: View, position: Int, id: Long,
       ev: MotionEvent, time: Long) {
     val event = TrackerEvent(CLICK)

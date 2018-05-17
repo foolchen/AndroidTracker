@@ -93,6 +93,7 @@ internal fun Fragment.getTrackProperties(): Map<String, Any> {
   return properties
 }
 
+@Suppress("UNUSED_PARAMETER")
 internal fun View.getTrackProperties(ev: MotionEvent?): Map<String, Any> {
   // 首先获取元素本身的属性
   val properties = HashMap<String, Any>()

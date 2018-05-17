@@ -168,7 +168,7 @@ object TrackerService {
 
   /** 对事件列表进行持久化 */
   private fun serializeEvents(events: List<TrackerEvent>) {
-    Tracker.trackContext?.getApplicationContext()?.let {
+    Tracker.trackContext.getApplicationContext().let {
       it.database.use {
         transaction {
           events.forEach {
@@ -183,7 +183,7 @@ object TrackerService {
   /** 对事件列表进行反持久化 */
   private fun deserializeEvents(): List<TrackerEvent> {
     val events = ArrayList<TrackerEvent>()
-    Tracker.trackContext?.getApplicationContext()?.database?.use {
+    Tracker.trackContext.getApplicationContext().database.use {
       // 查找出所有的数据
       select(EventContract.TABLE_NAME, EventContract.DATA).orderBy(EventContract.TIME,
           SqlOrderDirection.ASC)
