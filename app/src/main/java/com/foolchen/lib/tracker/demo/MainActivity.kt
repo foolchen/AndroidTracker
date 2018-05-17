@@ -38,7 +38,9 @@ class MainActivity : BaseActivity() {
             Demo("模拟登录及渠道号",
                 MockLoginFragment::class.java.name, buildArgs(false, false)),
             Demo("ButterKnife点击事件测试",
-                ButterKnifeFragment::class.java.name, buildArgs(false, false))
+                ButterKnifeFragment::class.java.name, buildArgs(false, false)),
+            Demo("Rx-Binding事件测试",
+                RxBindingFragment::class.java.name, buildArgs(false, false))
         )
     )
 

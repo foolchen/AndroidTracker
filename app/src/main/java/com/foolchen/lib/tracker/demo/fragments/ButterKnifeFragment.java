@@ -56,12 +56,13 @@ public class ButterKnifeFragment extends BaseFragment {
 
   static class ButterKnifeAdapter extends RecyclerView.Adapter<ButterKnifeHolder> {
 
-    @Override public ButterKnifeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull @Override
+    public ButterKnifeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
       return new ButterKnifeHolder(LayoutInflater.from(parent.getContext())
           .inflate(R.layout.item_butter_knife, parent, false));
     }
 
-    @Override public void onBindViewHolder(ButterKnifeHolder holder, int position) {
+    @Override public void onBindViewHolder(@NonNull ButterKnifeHolder holder, int position) {
       holder.mTvClickable.setText(holder.itemView.getContext()
           .getString(R.string.text_clickable_mask, String.valueOf(position)));
       holder.mTvNotClickable.setText(holder.itemView.getContext()
@@ -77,7 +78,7 @@ public class ButterKnifeFragment extends BaseFragment {
     @BindView(R.id.tv_clickable) TextView mTvClickable;
     @BindView(R.id.tv_not_clickable) TextView mTvNotClickable;
 
-    public ButterKnifeHolder(View itemView) {
+    ButterKnifeHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
       itemView.setOnClickListener(new View.OnClickListener() {
