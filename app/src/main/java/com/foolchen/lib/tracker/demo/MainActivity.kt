@@ -40,7 +40,7 @@ class MainActivity : BaseActivity() {
             Demo("ButterKnife点击事件测试",
                 ButterKnifeFragment::class.java.name, buildArgs(false, false)),
             Demo("Rx-Binding事件测试",
-                RxBindingFragment::class.java.name, buildArgs(false, false))
+                RxBindingFragment::class.java.name, buildArgs(false, false, true))
         )
     )
 
@@ -54,10 +54,12 @@ class MainActivity : BaseActivity() {
 
   override fun getTrackProperties(context: Context): Map<String, Any?>? = null
 
-  private fun buildArgs(isVisibilityEnable: Boolean, isChildrenEnable: Boolean): Bundle {
+  private fun buildArgs(isVisibilityEnable: Boolean, isChildrenEnable: Boolean,
+      useToolBar: Boolean = false): Bundle {
     val args = Bundle()
     args.putBoolean("visibility_enable", isVisibilityEnable)
     args.putBoolean("children_enable", isChildrenEnable)
+    args.putBoolean("useToolBar", useToolBar)
     return args
   }
 

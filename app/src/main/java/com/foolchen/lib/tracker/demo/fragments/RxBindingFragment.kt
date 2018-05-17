@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.foolchen.lib.tracker.Tracker
 import com.foolchen.lib.tracker.demo.R
+import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar
 import com.jakewharton.rxbinding2.view.RxView
 import kotlinx.android.synthetic.main.fragment_rx_binding.*
 import java.util.concurrent.TimeUnit
@@ -29,6 +30,35 @@ class RxBindingFragment : BaseFragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    tool_bar.title = "Rx-Binding"
+    tool_bar.inflateMenu(R.menu.menu_rx_binding)
+    RxToolbar.itemClicks(tool_bar)
+        .subscribe { menuItem ->
+          val map = HashMap<String, String>()
+          map["custom_action"] = "自定义行为_点击条目_${menuItem.title}"
+          Tracker.trackView(tool_bar.findViewById(menuItem.itemId), map)
+          Snackbar.make(cl, menuItem.title.toString(), Snackbar.LENGTH_INDEFINITE)
+              .setAction("关闭", {
+              }).show()
+        }
+    tool_bar.setNavigationIcon(R.drawable.ic_back_material)
+    tool_bar.navigationContentDescription = "back"
+    RxToolbar.navigationClicks(tool_bar)
+        .subscribe {
+          val map = HashMap<String, String>()
+          map["custom_action"] = "自定义行为_关闭页面"
+          val childCount = tool_bar.childCount
+          for (i in 0..childCount) {
+            val childAt = tool_bar.getChildAt(i)
+            if (childAt.contentDescription == "back") {
+              Tracker.trackView(childAt, map)
+              break
+            }
+          }
+          activity?.finish()
+        }
+
     rv_data.layoutManager = GridLayoutManager(context, 3)
 
     RxView.clicks(acb_fill_data)
@@ -41,7 +71,7 @@ class RxBindingFragment : BaseFragment() {
 
           val data = ArrayList<String>()
           for (i in 0 until 100) {
-            data.add("Item $i")
+            data.add("Item_$i")
           }
 
           rv_data.adapter = RxBindingAdapter(data)

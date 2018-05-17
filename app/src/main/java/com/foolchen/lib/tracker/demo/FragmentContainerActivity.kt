@@ -13,6 +13,9 @@ import com.foolchen.lib.tracker.lifecycle.ITrackerIgnore
 class FragmentContainerActivity : AppCompatActivity(), ITrackerIgnore {
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    if (intent.extras?.getBoolean("useToolBar") == true) {
+      setTheme(R.style.AppTheme_NoActionBar)
+    }
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_fragment_container)
 

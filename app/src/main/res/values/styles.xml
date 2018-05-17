@@ -6,6 +6,18 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+  </style>
+
+  <style name="AppTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="actionMenuTextColor">#FFFFFF</item>
+    <item name="toolbarStyle">@style/ToolBarTitleTextStyle</item>
+  </style>
+
+  <style name="ToolBarTitleTextStyle" parent="@style/Widget.AppCompat.Toolbar">
+    <item name="titleTextColor">#FFFFFF</item>
   </style>
 
 </resources>
